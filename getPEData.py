@@ -7,6 +7,7 @@ from dateutil.relativedelta import relativedelta
 import os
 import mysqlOp
 import drawLine
+import constant
 
 dtype={
       '行业代码':str,
@@ -80,7 +81,7 @@ def unzip(fileWithPath):
 
 def downloadPEDataFile(fileName, dateName):
     if not os.path.exists(makePEFilePath(dateName) + fileName):
-        url='http://47.97.204.47/syl/' + fileName
+        url= constant.PEDataUrl + fileName
         downlaodfile = requests.get(url)
         if downlaodfile.status_code != 404:
             open(makePEFilePath(dateName) + fileName, 'wb').write(downlaodfile.content)
@@ -122,8 +123,6 @@ def isDataExist(dateName, table):
 def saveData(data, dateName, table):
     if data is None:
         return
-    if isDataExist(dateName, table):
-        return
     conn = mysqlOp.connectMySQL()
     data['date'] = datetime.datetime.strptime(dateName, '%Y%m%d')
     data.to_sql(name=table, con = conn, if_exists='append', index=False)
@@ -131,14 +130,14 @@ def saveData(data, dateName, table):
 
 def getHYTypeFromDB(table):
     conn = mysqlOp.connectMySQL()
-    sql = 'select tb.HYCode from ' + table + ' tb group by tb.HYCode'
+    sql = 'select tb.HYCode from ' + table + ' tb where tb.date > "'+ constant.DataStartDate +'" group by tb.HYCode'
     ret = mysqlOp.fetchALL(conn, sql)
     conn.close()
     return ret
 
 def getHYDataFromDB(table, HYCode):
     conn = mysqlOp.connectMySQL()
-    sql = 'select * from ' + table + ' where HYCode=' + HYCode
+    sql = 'select * from ' + table + ' where HYCode=' + HYCode + ' and date > "' + constant.DataStartDate + '"'
     ret = mysqlOp.fetchALL(conn, sql)
     conn.close()
     return ret
@@ -154,7 +153,7 @@ def drewPEDateLines():
         df.columns = data[0].keys()
         Ys = [df['dynamicPE'], df['PEAvgMonth'], df['PEAvg3Month'], df['PEAvg6Month'], df['PEAvgYear']]
         colors = ['red','blue','green','yellow','black']
-        drawLine.drawLines(df['date'],Ys, lineNames, colors ,'PE-'+ code['HYCode'], './Data/Pics/' + df['HYName'][0] + '.svg')
+        drawLine.drawLines(df['date'], Ys, lineNames, colors ,'PE-'+ code['HYCode'], './Data/Pics/' + df['HYName'][0])
 
 def getLastDate():
     sql = 'select tb.date from PEData tb order by tb.date DESC'
@@ -174,7 +173,7 @@ def getPEData():
     '''startDate is the lastest date read form db . if is none it's the date five years ago'''
     startDate = getLastDate()
     if startDate is None:
-        startDate = endDate - relativedelta(year=5)
+        startDate = datetime.datetime.strptime(constant.DataStartDate, '%Y-%m-%d %H:%M:%S')
     else:
         startDate = startDate[0]
     print(startDate)

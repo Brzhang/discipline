@@ -5,12 +5,11 @@ import requests
 import os
 import mysqlOp
 import datetime
-
-fileName = '000906cons.xls'
+import constant
 
 def isDataExist(dateName, table):
     conn = mysqlOp.connectMySQL()
-    sql = 'select count(*) count from ' + table + ' where date=' + dateName.strftime("%Y%m-%d %H:%M:%S")
+    sql = 'select count(*) count from ' + table + ' where date="' + dateName + '"'
     ret = mysqlOp.fetchALL(conn, sql)
     conn.close()
     if ret[0]['count'] > 0:
@@ -19,9 +18,9 @@ def isDataExist(dateName, table):
         return False
 
 def downloadZZ800():
-    url='http://www.csindex.com.cn/uploads/file/autofile/cons/' + fileName
+    url='http://www.csindex.com.cn/uploads/file/autofile/cons/' + constant.ZZ800fileName
     zz800file = requests.get(url)
-    open('./Data/' + fileName, 'wb').write(zz800file.content)
+    open('./Data/' + constant.ZZ800fileName, 'wb').write(zz800file.content)
     return True
 
 dtype={
@@ -57,7 +56,25 @@ def createZZ800Table():
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
 
+def creatStockTable(stockCode):
+    conn = mysqlOp.connectMySQL()
+    tbInfo = stockCode + ' (data_id INT AUTO_INCREMENT, code VARCHAR(45) DEFAULT NULL,\
+        open FLOAT DEFAULT 0.0, close FLOAT DEFAULT 0.0, high FLOAT DEFAULT 0.0, low FLOAT DEFAULT 0.0,\
+        vol FLOAT DEFAULT 0.0, amount FLOAT DEFAULT 0.0, date DATE,\
+        PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
+    mysqlOp.createTable(conn, tbInfo)
+    conn.close()
+
 def saveData(data, table):
+    if data is None:
+        return
+    if isDataExist(data['date'][0].strftime('%Y%m%d'), table):
+        return
+    conn = mysqlOp.connectMySQL()
+    data.to_sql(name=table, con = conn, if_exists='append', index=False)
+    conn.close()
+
+def saveStockData(table,data):
     if data is None:
         return
     if isDataExist(data['date'][0], table):
@@ -66,17 +83,29 @@ def saveData(data, table):
     data.to_sql(name=table, con = conn, if_exists='append', index=False)
     conn.close()
 
-def getStockdata(stocklist):
+def getLastStockDate(stockCode):
+    sql = 'select tb.date from "' + stockCode + '" tb order by tb.date DESC'
+    conn = mysqlOp.connectMySQL()
+    ret = mysqlOp.fetchOne(conn, sql)
+    conn.close()
+    return ret
+
+def getStockdata(stockCodelist):
     api = TdxHq_API()
-    with api.connect('119.147.212.81', 7709):
-        for stock in stocklist:
-            data = api.get_security_bars(9, 0, stocklist, 0, 10) #返回普通list
-        return data
-        #data = api.to_df(api.get_security_bars(9, 0, '000001', 0, 10)) # 返回DataFrame
+    with api.connect(constant.HQServerIP, constant.HQServerPort):
+        for stock in stockCodelist:
+            creatStockTable('c' + stock)
+            startDate = getLastDate('c' + stock)
+            if startDate is None:
+                startDate = constant.DataStartDate
+            else:
+                startDate = (startDate[0] + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+            data = api.get_k_data(stock, startDate, datetime.date.today().strftime('%Y-%m-%d'))
+            if len(data) > 0:
+                saveStockData('c'+ stock, data)
 
-
-def getLastDate():
-    sql = 'select tb.date from ZZ800List tb order by tb.date DESC'
+def getLastDate(stockCode):
+    sql = 'select tb.date from ' + stockCode +' tb order by tb.date DESC'
     conn = mysqlOp.connectMySQL()
     ret = mysqlOp.fetchOne(conn, sql)
     conn.close()
@@ -87,4 +116,7 @@ def getZZ800List():
     if not os.path.exists('./Data'):
         os.mkdir('./Data')
     if downloadZZ800():
-        saveData(readZZ800Data(fileName), 'ZZ800List')
+        data = readZZ800Data(constant.ZZ800fileName)
+        saveData(data, 'ZZ800List')
+        getStockdata(data['Code'])
+    

@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 
 #connect db
 def connectMySQL():
-    engine = create_engine('mysql+pymysql://root:zjt841110@localhost:3306/discipline?charset=utf8')
+    engine = create_engine('mysql+pymysql://root:root@127.0.0.1:3306/discipline?charset=utf8')
     return engine.connect()
 
 #execute SQL
