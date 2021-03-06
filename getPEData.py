@@ -10,9 +10,11 @@ import drawLine
 import constant
 
 dtype={
-      '行业代码':str,
-      '行业名称':str
-       }   
+        '行业代码':str,
+        '行业名称':str,
+        '证券代码':str,
+        '四级行业代码':str
+    }   
 
 def filerData(data):
     data.drop(data[data['行业代码'].apply(lambda x: len(x)<8)].index, inplace=True)
@@ -68,6 +70,25 @@ def readDYRData(fileName):
         print(fileName + ' read failed')
         return None
 
+def readStockInfoData(fileName):
+    if os.path.exists('./Data/tmp/'+ fileName):
+        try:
+            content=xlrd.open_workbook(filename='./Data/tmp/'+ fileName, encoding_override='gb2312')
+        except Exception as e:
+            print('Error:',e, fileName + ' read failed')
+            return None
+        dataStock = pandas.DataFrame(pandas.read_excel(content, engine='xlrd', sheet_name='个股数据', dtype=dtype))
+        if len(dataStock) == 0:
+            return None
+        dataStock.columns = ['code', 'name', 'Level1HYCode', 'Level1HYName', 'Level2HYCode', 'Level2HYName', 'Level3HYCode', 'Level3HYName',
+                             'Level4HYCode', 'Level4HYName', 'PE', 'DynamicPE', 'PB', 'DYR']
+        dataStock.drop(['Level1HYCode', 'Level1HYName', 'Level2HYCode', 'Level2HYName', 'Level3HYCode', 'Level3HYName'], axis=1, inplace=True)
+        return dataStock
+    else:
+        #os.remove('./Data/'+ fileName)
+        print(fileName + ' read failed')
+        return None
+
 def makePEFilePath(dateName):
     if not os.path.exists('./Data/' + dateName[0:4] + '/'):
         os.mkdir('./Data/' + dateName[0:4] + '/')
@@ -110,6 +131,14 @@ def createDYRTable():
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
 
+def createStockInfo():
+    conn = mysqlOp.connectMySQL()
+    tbInfo = 'stockInfo (data_id INT(11) AUTO_INCREMENT, code VARCHAR(45) DEFAULT NULL, name VARCHAR(45) DEFAULT NULL,\
+        Level4HYcode VARCHAR(45) DEFAULT NULL, Level4HYname VARCHAR(80) DEFAULT NULL, PE FLOAT DEFAULT 0.0, DynamicPE FLOAT DEFAULT 0.0,\
+        PB FLOAT DEFAULT 0.0, DYR FLOAT DEFAULT 0.0, date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
+    mysqlOp.createTable(conn, tbInfo)
+    conn.close()
+
 def isDataExist(dateName, table):
     conn = mysqlOp.connectMySQL()
     sql = 'select count(*) count from ' + table + ' where date=' + dateName
@@ -120,7 +149,7 @@ def isDataExist(dateName, table):
     else:
         return False
 
-def saveData(data, dateName, table):
+def saveData(data, dateName, table, type):
     if data is None:
         return
     conn = mysqlOp.connectMySQL()
@@ -165,6 +194,7 @@ def getLastDate():
 def getPEData():
     createPETable()
     createDYRTable()
+    createStockInfo()
     if not os.path.exists('./Data'):
         os.mkdir('./Data')
     if not os.path.exists('./Data/tmp/'):
@@ -184,7 +214,11 @@ def getPEData():
         fileName = 'csi' + dateName + '.zip'
         if downloadPEDataFile(fileName, dateName):
             fileName = 'csi' + dateName + '.xls'
-            saveData(readPEData(fileName), dateName, 'PEData')
-            saveData(readDYRData(fileName), dateName, 'DYRData')
+            saveData(readPEData(fileName), dateName, 'PEData', 'append')
+            saveData(readDYRData(fileName), dateName, 'DYRData', 'append')
+            if(dateName == endDate.strftime('%Y%m%d')):
+                saveData(readStockInfoData(fileName), dateName, 'stockInfo', 'replace')
             if os.path.exists('./Data/tmp/'+fileName):
                 os.remove('./Data/tmp/'+fileName)
+
+    saveData(readStockInfoData('csi20210305.xls'), '20210305', 'stockInfo', 'replace')
