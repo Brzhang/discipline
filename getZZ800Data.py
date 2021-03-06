@@ -38,11 +38,7 @@ def readZZ800Data(fileName):
         if len(Data800) == 0:
             return None
         Data800.columns = ['date', 'index_code', 'index_name', 'index_name_en', 'Code', 'Name', 'Name_en', 'jsy']
-        Data800.drop(['index_code'],axis=1,inplace=True)
-        Data800.drop(['index_name'],axis=1,inplace=True)
-        Data800.drop(['index_name_en'],axis=1,inplace=True)
-        Data800.drop(['Name_en'],axis=1,inplace=True)
-        Data800.drop(['jsy'],axis=1,inplace=True)
+        Data800.drop(['index_code','index_name','index_name_en','Name_en','jsy'],axis=1,inplace=True)
         return Data800
     else:
         #os.remove('./Data/'+ fileName)
@@ -94,6 +90,7 @@ def getStockdata(stockCodelist):
     api = TdxHq_API()
     with api.connect(constant.HQServerIP, constant.HQServerPort):
         for stock in stockCodelist:
+            print('get socket data :', stock)
             creatStockTable('c' + stock)
             startDate = getLastDate('c' + stock)
             if startDate is None:
