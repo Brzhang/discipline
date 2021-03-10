@@ -80,19 +80,19 @@ def saveStockData(table,data):
     conn.close()
 
 def getLastStockDate(stockCode):
-    sql = 'select tb.date from "' + stockCode + '" tb order by tb.date DESC'
+    sql = 'select tb.date from ' + stockCode + ' tb order by tb.date DESC'
     conn = mysqlOp.connectMySQL()
     ret = mysqlOp.fetchOne(conn, sql)
     conn.close()
     return ret
 
-def getStockdata(stockCodelist):
+def getStocksdata(stockCodelist):
     api = TdxHq_API()
     with api.connect(constant.HQServerIP, constant.HQServerPort):
         for stock in stockCodelist:
             print('get socket data :', stock)
             creatStockTable('c' + stock)
-            startDate = getLastDate('c' + stock)
+            startDate = getLastStockDate('c' + stock)
             if startDate is None:
                 startDate = constant.DataStartDate
             else:
@@ -101,12 +101,27 @@ def getStockdata(stockCodelist):
             if len(data) > 0:
                 saveStockData('c'+ stock, data)
 
-def getLastDate(stockCode):
-    sql = 'select tb.date from ' + stockCode +' tb order by tb.date DESC'
+def getLastDate():
+    sql = 'select tb.date from ZZ800List tb order by tb.date DESC'
     conn = mysqlOp.connectMySQL()
     ret = mysqlOp.fetchOne(conn, sql)
     conn.close()
     return ret
+
+def getZZ800CodeList():
+    date = getLastDate()
+    sql = 'select tb.Code, tb.Name from ZZ800List tb where tb.date = ' + date[0].strftime('%Y%m%d')
+    conn = mysqlOp.connectMySQL()
+    codes = mysqlOp.fetchALL(conn, sql)
+    conn.close()
+    return codes
+
+def getStockKData(stockCode):
+    sql = 'select * from ' + stockCode
+    conn = mysqlOp.connectMySQL()
+    KData = mysqlOp.fetchALL(conn, sql)
+    conn.close()
+    return KData
 
 def getZZ800List():
     createZZ800Table()
@@ -115,5 +130,5 @@ def getZZ800List():
     if downloadZZ800():
         data = readZZ800Data(constant.ZZ800fileName)
         saveData(data, 'ZZ800List')
-        getStockdata(data['Code'])
+        getStocksdata(data['Code'])
     
