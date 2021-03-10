@@ -3,7 +3,6 @@ import xlrd
 import requests
 import zipfile
 import datetime
-from dateutil.relativedelta import relativedelta
 import os
 import mysqlOp
 import drawLine
@@ -83,6 +82,10 @@ def readStockInfoData(fileName):
         dataStock.columns = ['code', 'name', 'Level1HYCode', 'Level1HYName', 'Level2HYCode', 'Level2HYName', 'Level3HYCode', 'Level3HYName',
                              'Level4HYCode', 'Level4HYName', 'PE', 'DynamicPE', 'PB', 'DYR']
         dataStock.drop(['Level1HYCode', 'Level1HYName', 'Level2HYCode', 'Level2HYName', 'Level3HYCode', 'Level3HYName'], axis=1, inplace=True)
+        dataStock['PE'] = dataStock.apply(lambda x: float(x['PE']) if x['PE'] is not '-' else 0.0, axis=1)
+        dataStock['DynamicPE'] = dataStock.apply(lambda x: float(x['DynamicPE']) if x['DynamicPE'] is not '-' else 0.0, axis=1)
+        dataStock['PB'] = dataStock.apply(lambda x: float(x['PB']) if x['PB'] is not '-' else 0.0, axis=1)
+        dataStock['DYR'] = dataStock.apply(lambda x: float(x['DYR']) if x['DYR'] is not '-' else 0.0, axis=1)
         return dataStock
     else:
         #os.remove('./Data/'+ fileName)
@@ -220,5 +223,3 @@ def getPEData():
                 saveData(readStockInfoData(fileName), dateName, 'stockInfo', 'replace')
             if os.path.exists('./Data/tmp/'+fileName):
                 os.remove('./Data/tmp/'+fileName)
-
-    saveData(readStockInfoData('csi20210305.xls'), '20210305', 'stockInfo', 'replace')
