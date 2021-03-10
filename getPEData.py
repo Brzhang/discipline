@@ -194,6 +194,13 @@ def getLastDate():
     conn.close()
     return ret
 
+def getStockInfoWithCode(stockCode):
+    sql = 'select * from stockInfo where code=' + stockCode
+    conn = mysqlOp.connectMySQL()
+    ret = mysqlOp.fetchALL(conn, sql)
+    conn.close()
+    return ret
+
 def getPEData():
     createPETable()
     createDYRTable()
