@@ -10,4 +10,4 @@ def drawLines(x,y,name,color,titlename,fileName):
     plt.title(titlename)
     plt.legend()
     plt.savefig(fileName + '.' + constant.fileType, dpi=constant.drawDpi, format=constant.fileType, transparent=False, bbox_inches=None, pad_inches=0.1, metadata=None)
-    #plt.show()
+    return plt
