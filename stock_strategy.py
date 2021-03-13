@@ -5,10 +5,11 @@ import getZZ800Data as zz800
 import getPEData as PEdata
 import drawLine
 
-def MVAvgSystem():
+def MAAvgSystem():
     # get zz800 list
     stockList = zz800.getZZ800CodeList()
     for stock in stockList:
+        print('will calc MAAvgSystem: ', stock[0])
         data = DataFrame(zz800.getStockKData('c' + stock[0]))
         data.columns = ['data_id', 'code', 'open', 'close', 'high', 'low', 'vol', 'amount', 'date']
         data['MA5'] = talib.MA(numpy.array(data['close']), timeperiod = 5)
@@ -33,4 +34,4 @@ def MVAvgSystem():
             lineNames = ['MA5', 'MA10', 'MA20', 'MA60','MA120']
             Ys = [data['MA5'][120:], data['MA10'][120:], data['MA20'][120:], data['MA60'][120:], data['MA120'][120:]]
             colors = ['red','blue','green','yellow','black']
-            drawLine.drawLines(data['date'][120:], Ys, lineNames, colors ,'MA-' + stockInfo[1], './Data/Pics/' + stockInfo[1]).show()
+            drawLine.drawLines(data['date'][120:], Ys, lineNames, colors ,'MA-' + stockInfo[1], './Data/Pics/' + stockInfo[1]).close()

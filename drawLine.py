@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import constant
 
 def drawLines(x,y,name,color,titlename,fileName):
+    print('will draw: ', titlename, fileName)
     plt.figure(dpi=constant.drawDpi)
     for i in range(0, len(y)):
         plt.plot(x, y[i], label= name[i], linewidth=1, color = color[i])

@@ -18,6 +18,7 @@ def isDataExist(dateName, table):
         return False
 
 def downloadZZ800():
+    print('will download zz800')
     url='http://www.csindex.com.cn/uploads/file/autofile/cons/' + constant.ZZ800fileName
     zz800file = requests.get(url)
     open('./Data/' + constant.ZZ800fileName, 'wb').write(zz800file.content)
@@ -37,8 +38,8 @@ def readZZ800Data(fileName):
         Data800 = pandas.read_excel(content, engine='xlrd', dtype=dtype, parse_dates=['日期Date'])
         if len(Data800) == 0:
             return None
-        Data800.columns = ['date', 'index_code', 'index_name', 'index_name_en', 'Code', 'Name', 'Name_en', 'jsy']
-        Data800.drop(['index_code','index_name','index_name_en','Name_en','jsy'],axis=1,inplace=True)
+        Data800.columns = ['date', 'index_code', 'index_name', 'index_name_en', 'code', 'name', 'name_en', 'jsy']
+        Data800.drop(['index_code','index_name','index_name_en','name_en','jsy'],axis=1,inplace=True)
         return Data800
     else:
         #os.remove('./Data/'+ fileName)
@@ -47,7 +48,7 @@ def readZZ800Data(fileName):
 
 def createZZ800Table():
     conn = mysqlOp.connectMySQL()
-    tbInfo = 'ZZ800List (data_id INT(11) AUTO_INCREMENT, Code VARCHAR(45) DEFAULT NULL, Name VARCHAR(45) DEFAULT NULL,\
+    tbInfo = 'zz800list (data_id INT(11) AUTO_INCREMENT, code VARCHAR(45) DEFAULT NULL, name VARCHAR(45) DEFAULT NULL,\
         date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
@@ -103,7 +104,7 @@ def getStocksdata(stockCodelist):
                     saveStockData('c'+ stock, data)
 
 def getLastDate():
-    sql = 'select tb.date from ZZ800List tb order by tb.date DESC'
+    sql = 'select tb.date from zz800list tb order by tb.date DESC'
     conn = mysqlOp.connectMySQL()
     ret = mysqlOp.fetchOne(conn, sql)
     conn.close()
@@ -111,7 +112,7 @@ def getLastDate():
 
 def getZZ800CodeList():
     date = getLastDate()
-    sql = 'select tb.Code, tb.Name from ZZ800List tb where tb.date = ' + date[0].strftime('%Y%m%d')
+    sql = 'select tb.code, tb.Name from zz800list tb where tb.date = ' + date[0].strftime('%Y%m%d')
     conn = mysqlOp.connectMySQL()
     codes = mysqlOp.fetchALL(conn, sql)
     conn.close()
@@ -130,6 +131,5 @@ def getZZ800List():
         os.mkdir('./Data')
     if downloadZZ800():
         data = readZZ800Data(constant.ZZ800fileName)
-        saveData(data, 'ZZ800List')
-        getStocksdata(data['Code'])
-    
+        saveData(data, 'zz800list')
+        getStocksdata(data['code'])

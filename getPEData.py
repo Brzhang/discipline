@@ -3,6 +3,7 @@ import xlrd
 import requests
 import zipfile
 import datetime
+from dateutil.relativedelta import relativedelta
 import os
 import mysqlOp
 import drawLine
@@ -30,14 +31,14 @@ def readPEData(fileName):
         dataPE = filerData(dataPE)
         if len(dataPE) == 0:
             return None
-        dataPE.columns = ['HYCode', 'HYName', 'dynamicPE', 'stockNum', 'lostNum', 'PEAvgMonth', 'PEAvg3Month', 'PEAvg6Month', 'PEAvgYear']
-        dataPE['dynamicPE'] = dataPE.apply(lambda x: float(x['dynamicPE']) if x['dynamicPE'] is not '-' else 0.0, axis=1)
-        dataPE['stockNum'] = dataPE.apply(lambda x: int(x['stockNum']) if x['stockNum'] is not '-' else 0, axis=1)
-        dataPE['lostNum'] = dataPE.apply(lambda x: int(x['lostNum']) if x['lostNum'] is not '-' else 0, axis=1)
-        dataPE['PEAvgMonth'] = dataPE.apply(lambda x: float(x['PEAvgMonth']) if x['PEAvgMonth'] is not '-' else 0.0, axis=1)
-        dataPE['PEAvg3Month'] = dataPE.apply(lambda x: float(x['PEAvg3Month']) if x['PEAvg3Month'] is not '-' else 0.0, axis=1)
-        dataPE['PEAvg6Month'] = dataPE.apply(lambda x: float(x['PEAvg6Month']) if x['PEAvg6Month'] is not '-' else 0.0, axis=1)
-        dataPE['PEAvgYear'] = dataPE.apply(lambda x: float(x['PEAvgYear']) if x['PEAvgYear'] is not '-' else 0.0, axis=1)
+        dataPE.columns = ['hy_code', 'hy_name', 'dynamic_pe', 'stocknum', 'lostnum', 'pe_avg_month', 'pe_avg_3month', 'pe_avg_6month', 'pe_avg_year']
+        dataPE['dynamic_pe'] = dataPE.apply(lambda x: float(x['dynamic_pe']) if x['dynamic_pe'] != '-' else 0.0, axis=1)
+        dataPE['stocknum'] = dataPE.apply(lambda x: int(x['stocknum']) if x['stocknum'] != '-' else 0, axis=1)
+        dataPE['lostnum'] = dataPE.apply(lambda x: int(x['lostnum']) if x['lostnum'] != '-' else 0, axis=1)
+        dataPE['pe_avg_month'] = dataPE.apply(lambda x: float(x['pe_avg_month']) if x['pe_avg_month'] != '-' else 0.0, axis=1)
+        dataPE['pe_avg_3month'] = dataPE.apply(lambda x: float(x['pe_avg_3month']) if x['pe_avg_3month'] != '-' else 0.0, axis=1)
+        dataPE['pe_avg_6month'] = dataPE.apply(lambda x: float(x['pe_avg_6month']) if x['pe_avg_6month'] != '-' else 0.0, axis=1)
+        dataPE['pe_avg_year'] = dataPE.apply(lambda x: float(x['pe_avg_year']) if x['pe_avg_year'] != '-' else 0.0, axis=1)
         return dataPE
     else:
         #os.remove('./Data/'+ fileName)
@@ -55,14 +56,14 @@ def readDYRData(fileName):
         dataDYR = filerData(dataDYR)
         if len(dataDYR) == 0:
             return None
-        dataDYR.columns = ['HYCode', 'HYName', 'DYR', 'stockNum', 'NoDYRNum', 'DYRAvgMonth', 'DYRAvg3Month', 'DYRAvg6Month', 'DYRAvgYear']
-        dataDYR['DYR'] = dataDYR.apply(lambda x: float(x['DYR']) if x['DYR'] is not '-' else 0.0, axis=1)
-        dataDYR['stockNum'] = dataDYR.apply(lambda x: int(x['stockNum']) if x['stockNum'] is not '-' else 0, axis=1)
-        dataDYR['NoDYRNum'] = dataDYR.apply(lambda x: int(x['NoDYRNum']) if x['NoDYRNum'] is not '-' else 0, axis=1)
-        dataDYR['DYRAvgMonth'] = dataDYR.apply(lambda x: float(x['DYRAvgMonth']) if x['DYRAvgMonth'] is not '-' else 0.0, axis=1)
-        dataDYR['DYRAvg3Month'] = dataDYR.apply(lambda x: float(x['DYRAvg3Month']) if x['DYRAvg3Month'] is not '-' else 0.0, axis=1)
-        dataDYR['DYRAvg6Month'] = dataDYR.apply(lambda x: float(x['DYRAvg6Month']) if x['DYRAvg6Month'] is not '-' else 0.0, axis=1)
-        dataDYR['DYRAvgYear'] = dataDYR.apply(lambda x: float(x['DYRAvgYear']) if x['DYRAvgYear'] is not '-' else 0.0, axis=1)
+        dataDYR.columns = ['hy_code', 'hy_name', 'dyr', 'stocknum', 'no_dyr_num', 'dyr_avg_month', 'dyr_avg_3month', 'dyr_avg_6month', 'dyr_avg_year']
+        dataDYR['dyr'] = dataDYR.apply(lambda x: float(x['dyr']) if x['dyr'] != '-' else 0.0, axis=1)
+        dataDYR['stocknum'] = dataDYR.apply(lambda x: int(x['stocknum']) if x['stocknum'] != '-' else 0, axis=1)
+        dataDYR['no_dyr_num'] = dataDYR.apply(lambda x: int(x['no_dyr_num']) if x['no_dyr_num'] != '-' else 0, axis=1)
+        dataDYR['dyr_avg_month'] = dataDYR.apply(lambda x: float(x['dyr_avg_month']) if x['dyr_avg_month'] != '-' else 0.0, axis=1)
+        dataDYR['dyr_avg_3month'] = dataDYR.apply(lambda x: float(x['dyr_avg_3month']) if x['dyr_avg_3month'] != '-' else 0.0, axis=1)
+        dataDYR['dyr_avg_6month'] = dataDYR.apply(lambda x: float(x['dyr_avg_6month']) if x['dyr_avg_6month'] != '-' else 0.0, axis=1)
+        dataDYR['dyr_avg_year'] = dataDYR.apply(lambda x: float(x['dyr_avg_year']) if x['dyr_avg_year'] != '-' else 0.0, axis=1)
         return dataDYR
     else:
         #os.remove('./Data/'+ fileName)
@@ -79,13 +80,9 @@ def readStockInfoData(fileName):
         dataStock = pandas.DataFrame(pandas.read_excel(content, engine='xlrd', sheet_name='个股数据', dtype=dtype))
         if len(dataStock) == 0:
             return None
-        dataStock.columns = ['code', 'name', 'Level1HYCode', 'Level1HYName', 'Level2HYCode', 'Level2HYName', 'Level3HYCode', 'Level3HYName',
-                             'Level4HYCode', 'Level4HYName', 'PE', 'DynamicPE', 'PB', 'DYR']
-        dataStock.drop(['Level1HYCode', 'Level1HYName', 'Level2HYCode', 'Level2HYName', 'Level3HYCode', 'Level3HYName'], axis=1, inplace=True)
-        dataStock['PE'] = dataStock.apply(lambda x: float(x['PE']) if x['PE'] is not '-' else 0.0, axis=1)
-        dataStock['DynamicPE'] = dataStock.apply(lambda x: float(x['DynamicPE']) if x['DynamicPE'] is not '-' else 0.0, axis=1)
-        dataStock['PB'] = dataStock.apply(lambda x: float(x['PB']) if x['PB'] is not '-' else 0.0, axis=1)
-        dataStock['DYR'] = dataStock.apply(lambda x: float(x['DYR']) if x['DYR'] is not '-' else 0.0, axis=1)
+        dataStock.columns = ['code', 'name', 'level1_hy_code', 'level1_hy_name', 'level2_hy_code', 'level2_hy_name', 'level3_hy_code', 'level3_hy_name',
+                             'level4_hy_code', 'level4_hy_name', 'pe', 'dynamic_pe', 'pb', 'dyr']
+        dataStock.drop(['level1_hy_code', 'level1_hy_name', 'level2_hy_code', 'level2_hy_name', 'level3_hy_code', 'level3_hy_name'], axis=1, inplace=True)
         return dataStock
     else:
         #os.remove('./Data/'+ fileName)
@@ -105,6 +102,7 @@ def unzip(fileWithPath):
 
 def downloadPEDataFile(fileName, dateName):
     if not os.path.exists(makePEFilePath(dateName) + fileName):
+        print('will download file:', fileName)
         url= constant.PEDataUrl + fileName
         downlaodfile = requests.get(url)
         if downlaodfile.status_code != 404:
@@ -118,27 +116,27 @@ def downloadPEDataFile(fileName, dateName):
 
 def createPETable():
     conn = mysqlOp.connectMySQL()
-    tbInfo = 'PEData (data_id INT(11) AUTO_INCREMENT, HYCode VARCHAR(45) DEFAULT NULL, HYName VARCHAR(45) DEFAULT NULL, \
-        dynamicPE FLOAT DEFAULT 0.0, stockNum INT DEFAULT 0, lostNum INT DEFAULT 0, PEAvgMonth FLOAT DEFAULT 0.0,\
-        PEAvg3Month FLOAT DEFAULT 0.0, PEAvg6Month FLOAT DEFAULT 0.0, PEAvgYear FLOAT DEFAULT 0.0,\
+    tbInfo = 'pe_data (data_id INT(11) AUTO_INCREMENT, hy_code VARCHAR(45) DEFAULT NULL, hy_name VARCHAR(45) DEFAULT NULL, \
+        dynamic_pe FLOAT DEFAULT 0.0, stocknum INT DEFAULT 0, lostnum INT DEFAULT 0, pe_avg_month FLOAT DEFAULT 0.0,\
+        pe_avg_3month FLOAT DEFAULT 0.0, pe_avg_6month FLOAT DEFAULT 0.0, pe_avg_year FLOAT DEFAULT 0.0,\
         date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
 
 def createDYRTable():
     conn = mysqlOp.connectMySQL()
-    tbInfo = 'DYRData (data_id INT(11) AUTO_INCREMENT, HYCode VARCHAR(45) DEFAULT NULL, HYName VARCHAR(45) DEFAULT NULL,\
-        DYR FLOAT DEFAULT 0.0, stockNum INT DEFAULT 0, NoDYRNum INT DEFAULT 0, DYRAvgMonth FLOAT DEFAULT 0.0,\
-        DYRAvg3Month FLOAT DEFAULT 0.0, DYRAvg6Month FLOAT DEFAULT 0.0, DYRAvgYear FLOAT DEFAULT 0.0,\
+    tbInfo = 'dyr_data (data_id INT(11) AUTO_INCREMENT, hy_code VARCHAR(45) DEFAULT NULL, hy_name VARCHAR(45) DEFAULT NULL,\
+        dyr FLOAT DEFAULT 0.0, stocknum INT DEFAULT 0, no_dyr_num INT DEFAULT 0, dyr_avg_month FLOAT DEFAULT 0.0,\
+        dyr_avg_3month FLOAT DEFAULT 0.0, dyr_avg_6month FLOAT DEFAULT 0.0, dyr_avg_year FLOAT DEFAULT 0.0,\
         date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
 
 def createStockInfo():
     conn = mysqlOp.connectMySQL()
-    tbInfo = 'stockInfo (data_id INT(11) AUTO_INCREMENT, code VARCHAR(45) DEFAULT NULL, name VARCHAR(45) DEFAULT NULL,\
-        Level4HYcode VARCHAR(45) DEFAULT NULL, Level4HYname VARCHAR(80) DEFAULT NULL, PE FLOAT DEFAULT 0.0, DynamicPE FLOAT DEFAULT 0.0,\
-        PB FLOAT DEFAULT 0.0, DYR FLOAT DEFAULT 0.0, date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
+    tbInfo = 'stock_info (data_id INT(11) AUTO_INCREMENT, code VARCHAR(45) DEFAULT NULL, name VARCHAR(45) DEFAULT NULL,\
+        level4_hy_code VARCHAR(45) DEFAULT NULL, level4_hy_name VARCHAR(80) DEFAULT NULL, pe FLOAT DEFAULT 0.0, dynamic_pe FLOAT DEFAULT 0.0,\
+        pb FLOAT DEFAULT 0.0, dyr FLOAT DEFAULT 0.0, date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
 
@@ -156,20 +154,20 @@ def saveData(data, dateName, table, type):
     if data is None:
         return
     conn = mysqlOp.connectMySQL()
-    data['date'] = datetime.datetime.strptime(dateName, '%Y%m%d')
-    data.to_sql(name=table, con = conn, if_exists='append', index=False)
+    data['date'] = datetime.datetime.strptime(dateName, '%Y%m%d').date()
+    data.to_sql(name=table, con = conn, if_exists=type, index=False)
     conn.close()
 
 def getHYTypeFromDB(table):
     conn = mysqlOp.connectMySQL()
-    sql = 'select tb.HYCode from ' + table + ' tb where tb.date > "'+ constant.DataStartDate +'" group by tb.HYCode'
+    sql = 'select tb.hy_code from ' + table + ' tb where tb.date > "'+ constant.DataStartDate +'" group by tb.hy_code'
     ret = mysqlOp.fetchALL(conn, sql)
     conn.close()
     return ret
 
 def getHYDataFromDB(table, HYCode):
     conn = mysqlOp.connectMySQL()
-    sql = 'select * from ' + table + ' where HYCode=' + HYCode + ' and date > "' + constant.DataStartDate + '"'
+    sql = 'select * from ' + table + ' where hy_code=' + HYCode + ' and date > "' + constant.DataStartDate + '"'
     ret = mysqlOp.fetchALL(conn, sql)
     conn.close()
     return ret
@@ -177,25 +175,34 @@ def getHYDataFromDB(table, HYCode):
 def drewPEDateLines():
     if not os.path.exists('./Data/Pics'):
         os.mkdir('./Data/Pics')
-    HYCodes = getHYTypeFromDB('PEData')
+    HYCodes = getHYTypeFromDB('pe_data')
     for code in HYCodes:
-        data = getHYDataFromDB('PEData', code['HYCode'])
+        data = getHYDataFromDB('pe_data', code['hy_code'])
         lineNames = ['dynamicPE', 'MonthAvg', '3MonthAvg', '6MonthAvg','YearAvg']
         df = pandas.DataFrame(data)
         df.columns = data[0].keys()
-        Ys = [df['dynamicPE'], df['PEAvgMonth'], df['PEAvg3Month'], df['PEAvg6Month'], df['PEAvgYear']]
+        Ys = [df['dynamic_pe'], df['pe_avg_month'], df['pe_avg_3month'], df['pe_avg_6month'], df['pe_avg_year']]
         colors = ['red','blue','green','yellow','black']
-        drawLine.drawLines(df['date'], Ys, lineNames, colors ,'PE-'+ code['HYCode'], './Data/Pics/' + df['HYName'][0])
+        drawLine.drawLines(df['date'], Ys, lineNames, colors ,'PE-'+ code['hy_code'], './Data/Pics/' + df['hy_name'][0]).close()
 
 def getLastDate():
-    sql = 'select tb.date from PEData tb order by tb.date DESC'
+    sql = 'select tb.date from pe_data tb order by tb.date DESC'
     conn = mysqlOp.connectMySQL()
     ret = mysqlOp.fetchOne(conn, sql)
     conn.close()
     return ret
 
+def getStockInfo(dateName):
+    fileName = 'csi' + dateName + '.zip'
+    unzip(makePEFilePath(dateName) + fileName)
+    print('will save stock_info: ', dateName)
+    fileName = 'csi' + dateName + '.xls'
+    saveData(readStockInfoData(fileName), dateName, 'stock_info', 'replace')
+    if os.path.exists('./Data/tmp/'+fileName):
+        os.remove('./Data/tmp/'+fileName)
+
 def getStockInfoWithCode(stockCode):
-    sql = 'select * from stockInfo where code=' + stockCode
+    sql = 'select * from stock_info where code=' + stockCode
     conn = mysqlOp.connectMySQL()
     ret = mysqlOp.fetchALL(conn, sql)
     conn.close()
@@ -213,20 +220,25 @@ def getPEData():
     '''startDate is the lastest date read form db . if is none it's the date five years ago'''
     startDate = getLastDate()
     if startDate is None:
-        startDate = datetime.datetime.strptime(constant.DataStartDate, '%Y-%m-%d %H:%M:%S')
+        startDate = datetime.datetime.strptime(constant.DataStartDate, '%Y-%m-%d').date()
     else:
         startDate = startDate[0]
-    print(startDate)
+    print('start date: ', startDate)
+    dateNameList=[]
     for i in range((endDate - startDate).days + 1):
         dateName = (startDate + datetime.timedelta(days=i)).strftime('%Y%m%d')
-        if isDataExist(dateName, 'PEData') and isDataExist(dateName, 'DYRData'):
+        if isDataExist(dateName, 'pe_data') and isDataExist(dateName, 'dyr_data'):
             continue
         fileName = 'csi' + dateName + '.zip'
         if downloadPEDataFile(fileName, dateName):
+            dateNameList.append(dateName)
             fileName = 'csi' + dateName + '.xls'
-            saveData(readPEData(fileName), dateName, 'PEData', 'append')
-            saveData(readDYRData(fileName), dateName, 'DYRData', 'append')
-            if(dateName == endDate.strftime('%Y%m%d')):
-                saveData(readStockInfoData(fileName), dateName, 'stockInfo', 'replace')
+            print('will save pe&dyr date: ', dateName)
+            saveData(readPEData(fileName), dateName, 'pe_data', 'append')
+            saveData(readDYRData(fileName), dateName, 'dyr_data', 'append')
             if os.path.exists('./Data/tmp/'+fileName):
                 os.remove('./Data/tmp/'+fileName)
+    # get lasted stocked info
+    if len(dateNameList) > 0:
+        dateName = dateNameList.pop()
+        getStockInfo(dateName)
