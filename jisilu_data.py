@@ -8,6 +8,7 @@ import json
 import re
 import mysqlOp
 import datetime
+import constant
 
 def isDataExist(dateName, table):
     conn = mysqlOp.connectMySQL()
@@ -58,6 +59,37 @@ def create_jsl_temperature_table():
             date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
+
+def get_jsl_dividend_rate_from_db():
+    return get_data_from_db('dividend_rate')
+
+def get_jsl_convert_bond_from_db():
+    return get_data_from_db('convert_bond')
+
+def get_jsl_temperature_from_db():
+    return get_data_from_db('jsl_temperature')
+
+def get_data_from_db(table):
+    conn = mysqlOp.connectMySQL()
+    sql = 'SELECT * from ' + table + ' where date=(select max(date) from ' + table + ')'
+    ret = mysqlOp.fetchALL(conn, sql)
+    conn.close()
+    return ret
+
+def convert_divident_rete_data_json(data):
+    columns = ['stock_id', 'stock_nm', 'price', 'increase_rt', 'volume', 'total_value','pe', 'pe_temperature', 'pb', 'pb_temperature',
+                'aft_dividend', 'dividend_rate', 'dividend_rate2', 'roe', 'roe_average', 'revenue_average', 'profit_average',
+                'cashflow_average', 'dividend_rate_average', 'eps_growth_ttm', 'int_debt_rate', 'industry_nm', 'date']
+    return constant.convertDBToJson(data, columns)
+
+def convert_jsl_convert_bond_data_json(data):
+    columns = ['bond_id', 'bond_nm', 'price', 'increase_rt', 'stock_nm', 'sprice','sincrease_rt', 'pb', 'convert_price', 'convert_value', 'premium_rt',
+                'rating_cd', 'force_redeem_price', 'date']
+    return constant.convertDBToJson(data, columns)
+
+def convert_jsl_temperature_json(data):
+    columns = ['price_dt', 'median_pb', 'median_pb_temperature', 'median_pe', 'median_pe_temperature', 'stock_count', 'IPO_count', 'st_count', 'index_point', 'date']
+    return constant.convertDBToJson(data, columns)
 
 def get_jsl_dividend_rate():
     """

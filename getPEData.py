@@ -45,6 +45,31 @@ def readPEData(fileName):
         print(fileName + ' read failed')
         return None
 
+def readPBData(fileName):
+    if os.path.exists('./Data/tmp/'+ fileName):
+        try:
+            content=xlrd.open_workbook(filename='./Data/tmp/'+ fileName, encoding_override='gb2312')
+        except Exception as e:
+            print('Error:',e, fileName + ' read failed')
+            return None
+        dataPB = pandas.DataFrame(pandas.read_excel(content, engine='xlrd', sheet_name='中证行业市净率', dtype=dtype))
+        dataPB = filerData(dataPB)
+        if len(dataPB) == 0:
+            return None
+        dataPB.columns = ['hy_code', 'hy_name', 'pb', 'stocknum', 'lostnum', 'pb_avg_month', 'pb_avg_3month', 'pb_avg_6month', 'pb_avg_year']
+        dataPB['pb'] = dataPB.apply(lambda x: float(x['pb']) if x['pb'] != '-' else 0.0, axis=1)
+        dataPB['stocknum'] = dataPB.apply(lambda x: int(x['stocknum']) if x['stocknum'] != '-' else 0, axis=1)
+        dataPB['lostnum'] = dataPB.apply(lambda x: int(x['lostnum']) if x['lostnum'] != '-' else 0, axis=1)
+        dataPB['pb_avg_month'] = dataPB.apply(lambda x: float(x['pb_avg_month']) if x['pb_avg_month'] != '-' else 0.0, axis=1)
+        dataPB['pb_avg_3month'] = dataPB.apply(lambda x: float(x['pb_avg_3month']) if x['pb_avg_3month'] != '-' else 0.0, axis=1)
+        dataPB['pb_avg_6month'] = dataPB.apply(lambda x: float(x['pb_avg_6month']) if x['pb_avg_6month'] != '-' else 0.0, axis=1)
+        dataPB['pb_avg_year'] = dataPB.apply(lambda x: float(x['pb_avg_year']) if x['pb_avg_year'] != '-' else 0.0, axis=1)
+        return dataPB
+    else:
+        #os.remove('./Data/'+ fileName)
+        print(fileName + ' read failed')
+        return None
+
 def readDYRData(fileName):
     if os.path.exists('./Data/tmp/'+ fileName):
         try:
@@ -119,6 +144,15 @@ def createPETable():
     tbInfo = 'pe_data (data_id INT(11) AUTO_INCREMENT, hy_code VARCHAR(45) DEFAULT NULL, hy_name VARCHAR(45) DEFAULT NULL, \
         dynamic_pe FLOAT DEFAULT 0.0, stocknum INT DEFAULT 0, lostnum INT DEFAULT 0, pe_avg_month FLOAT DEFAULT 0.0,\
         pe_avg_3month FLOAT DEFAULT 0.0, pe_avg_6month FLOAT DEFAULT 0.0, pe_avg_year FLOAT DEFAULT 0.0,\
+        date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
+    mysqlOp.createTable(conn, tbInfo)
+    conn.close()
+
+def createPBTable():
+    conn = mysqlOp.connectMySQL()
+    tbInfo = 'pb_data (data_id INT(11) AUTO_INCREMENT, hy_code VARCHAR(45) DEFAULT NULL, hy_name VARCHAR(45) DEFAULT NULL, \
+        pb FLOAT DEFAULT 0.0, stocknum INT DEFAULT 0, lostnum INT DEFAULT 0, pb_avg_month FLOAT DEFAULT 0.0,\
+        pb_avg_3month FLOAT DEFAULT 0.0, pb_avg_6month FLOAT DEFAULT 0.0, pb_avg_year FLOAT DEFAULT 0.0,\
         date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
@@ -208,33 +242,37 @@ def getStockInfoWithCode(stockCode):
     conn.close()
     return ret
 
-def getPEData():
+def calcIndustryValue():
+    sql = 'select * from pe_data group by'
+
+def getPEData(endDate):
     createPETable()
+    createPBTable()
     createDYRTable()
     createStockInfo()
     if not os.path.exists('./Data'):
         os.mkdir('./Data')
     if not os.path.exists('./Data/tmp/'):
         os.mkdir('./Data/tmp/')
-    endDate = datetime.date.today()
     '''startDate is the lastest date read form db . if is none it's the date five years ago'''
     startDate = getLastDate()
     if startDate is None:
         startDate = datetime.datetime.strptime(constant.DataStartDate, '%Y-%m-%d').date()
     else:
         startDate = startDate[0]
-    print('start date: ', startDate)
+    print('start date: ', startDate, ' endDate: ', endDate)
     dateNameList=[]
     for i in range((endDate - startDate).days + 1):
         dateName = (startDate + datetime.timedelta(days=i)).strftime('%Y%m%d')
-        if isDataExist(dateName, 'pe_data') and isDataExist(dateName, 'dyr_data'):
+        if isDataExist(dateName, 'pe_data') and isDataExist(dateName, 'dyr_data') and isDataExist(dateName, 'pb_data'):
             continue
         fileName = 'csi' + dateName + '.zip'
         if downloadPEDataFile(fileName, dateName):
             dateNameList.append(dateName)
             fileName = 'csi' + dateName + '.xls'
-            print('will save pe&dyr date: ', dateName)
+            print('will save pe&pb&dyr date: ', dateName)
             saveData(readPEData(fileName), dateName, 'pe_data', 'append')
+            saveData(readPBData(fileName), dateName, 'pb_data', 'append')
             saveData(readDYRData(fileName), dateName, 'dyr_data', 'append')
             if os.path.exists('./Data/tmp/'+fileName):
                 os.remove('./Data/tmp/'+fileName)
