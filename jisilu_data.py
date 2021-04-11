@@ -23,9 +23,14 @@ def isDataExist(dateName, table):
 def saveData(data, table, type):
     if data is None:
         return
-    if isDataExist(data['date'][0].strftime('%Y%m%d'), table):
-        return
     conn = mysqlOp.connectMySQL()
+    if type == 'replace':
+        type = 'append'
+        sql = "delete from " + table + ' where data_id > 0'
+        mysqlOp.executeSQL(conn, sql)
+    elif isDataExist(data['date'][0].strftime('%Y%m%d'), table):
+        conn.close()
+        return
     data.to_sql(name=table, con = conn, if_exists=type, index=False)
     conn.close()
 
@@ -34,19 +39,19 @@ def create_dividend_rate_table():
     tbInfo = 'dividend_rate (data_id INT(11) AUTO_INCREMENT, stock_id VARCHAR(45) DEFAULT NULL, stock_nm VARCHAR(45) DEFAULT NULL,\
             price FLOAT DEFAULT 0.0, increase_rt FLOAT DEFAULT 0.0, volume FLOAT DEFAULT 0.0, total_value FLOAT DEFAULT 0.0,\
             pe FLOAT DEFAULT 0.0, pe_temperature FLOAT DEFAULT 0.0, pb FLOAT DEFAULT 0.0, pb_temperature FLOAT DEFAULT 0.0,\
-            aft_divided FLOAT DEFAULT 0.0, dividend_rate FLOAT DEFAULT 0.0, dividend_rate2 FLOAT DEFAULT 0.0, roe FLOAT DEFAULT 0.0,\
+            aft_dividend FLOAT DEFAULT 0.0, dividend_rate FLOAT DEFAULT 0.0, dividend_rate2 FLOAT DEFAULT 0.0, roe FLOAT DEFAULT 0.0,\
             roe_average FLOAT DEFAULT 0.0, revenue_average FLOAT DEFAULT 0.0, profit_average FLOAT DEFAULT 0.0, cashflow_average FLOAT DEFAULT 0.0,\
-            dividend_rate_average FLOAT DEFAULT 0.0, eps_growth_ttm FLOAT DEFAULT 0.0, init_debt_rate FLOAT DEFAULT 0.0,\
-            industry_nm FLOAT DEFAULT 0.0, date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
+            dividend_rate_average FLOAT DEFAULT 0.0, eps_growth_ttm FLOAT DEFAULT 0.0, int_debt_rate FLOAT DEFAULT 0.0,\
+            industry_nm VARCHAR(45) DEFAULT NULL, date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
 
 def create_convert_bond_table():
     conn = mysqlOp.connectMySQL()
     tbInfo = 'convert_bond (data_id INT(11) AUTO_INCREMENT, bond_id VARCHAR(45) DEFAULT NULL, bond_nm VARCHAR(45) DEFAULT NULL,\
-            price FLOAT DEFAULT 0.0, increase_rt FLOAT DEFAULT 0.0, stock_nm VARCHAR(45) DEFAULT NULL, sprice FLOAT DEFAULT 0.0,\
-            sincrease_rt FLOAT DEFAULT 0.0, pb FLOAT DEFAULT 0.0, convert_price FLOAT DEFAULT 0.0, convert_value FLOAT DEFAULT 0.0,\
-            premium_rt FLOAT DEFAULT 0.0, rating_cd FLOAT DEFAULT 0.0, force_redeem_price FLOAT DEFAULT 0.0,\
+            price FLOAT DEFAULT 0.0, increase_rt VARCHAR(16) DEFAULT NULL, stock_nm VARCHAR(45) DEFAULT NULL, sprice FLOAT DEFAULT 0.0,\
+            sincrease_rt VARCHAR(16) DEFAULT NULL, pb FLOAT DEFAULT 0.0, convert_price FLOAT DEFAULT 0.0, convert_value FLOAT DEFAULT 0.0,\
+            premium_rt VARCHAR(16) DEFAULT NULL, rating_cd VARCHAR(16) DEFAULT NULL, force_redeem_price FLOAT DEFAULT 0.0,\
             date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
