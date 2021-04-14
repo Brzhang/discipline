@@ -218,6 +218,25 @@ def drewPEDateLines():
         Ys = [df['dynamic_pe'], df['pe_avg_month'], df['pe_avg_3month'], df['pe_avg_6month'], df['pe_avg_year']]
         colors = ['red','blue','green','yellow','black']
         drawLine.drawLines(df['date'], Ys, lineNames, colors ,'PE-'+ code['hy_code'], './Data/Pics/' + df['hy_name'][0]).close()
+    
+def calcIndustryValue():
+    result: List[Any] = []
+    sql = 'select dynamic_pe, hy_code, hy_name, stocknum, lostnum  from pe_data where date=(select max(date) from pe_data) and stocknum>0'
+    conn = mysqlOp.connectMySQL()
+    ret = mysqlOp.fetchALL(conn, sql)
+    for row in ret:
+        sql = 'select count(pe.dynamic_pe <= ' + str(row['dynamic_pe']) + '  or null) AS pos, count(*) total from pe_data pe \
+            where pe.hy_code = ' + str(row['hy_code'])
+        data = mysqlOp.fetchOne(conn, sql)
+        temperature = float('%.1f' %(data['pos']*100/data['total']))
+        sql = 'select GROUP_CONCAT(name) from stock_info where level4_hy_code =' + str(row['hy_code']) + ' and name \
+            in (select name from zz800list where date=(select max(date) from zz800list))'
+        stocks = mysqlOp.fetchOne(conn, sql)
+        value = {'industry_id':row['hy_code'], 'industry_name':row['hy_name'], 'pe':row['dynamic_pe'], 'pe_temperature': temperature, 
+                    'stock_num':row['stocknum'], 'lost_num':row['lostnum'], 'stocks': stocks[0]}
+        result.append(value)
+    conn.close()
+    return result
 
 def getLastDate():
     sql = 'select tb.date from pe_data tb order by tb.date DESC'
@@ -241,9 +260,6 @@ def getStockInfoWithCode(stockCode):
     ret = mysqlOp.fetchALL(conn, sql)
     conn.close()
     return ret
-
-def calcIndustryValue():
-    sql = 'select * from pe_data group by'
 
 def getPEData(endDate):
     createPETable()

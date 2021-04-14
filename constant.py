@@ -29,6 +29,8 @@ def f_dot_3(num):
 def convertDBToDF(ret, columns):
     data = pandas.DataFrame(list(ret))
     data.columns = columns
+    if 'date' in columns:
+        data['date'] =  data.apply(lambda x: x['date'].strftime('%Y-%m-%d'), axis=1)
     return data
 
 def convertDBToJson(ret, columns):

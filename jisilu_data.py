@@ -82,18 +82,18 @@ def get_data_from_db(table):
     return ret
 
 def convert_divident_rete_data_json(data):
-    columns = ['stock_id', 'stock_nm', 'price', 'increase_rt', 'volume', 'total_value','pe', 'pe_temperature', 'pb', 'pb_temperature',
+    columns = ['data_id', 'stock_id', 'stock_nm', 'price', 'increase_rt', 'volume', 'total_value','pe', 'pe_temperature', 'pb', 'pb_temperature',
                 'aft_dividend', 'dividend_rate', 'dividend_rate2', 'roe', 'roe_average', 'revenue_average', 'profit_average',
                 'cashflow_average', 'dividend_rate_average', 'eps_growth_ttm', 'int_debt_rate', 'industry_nm', 'date']
     return constant.convertDBToJson(data, columns)
 
 def convert_jsl_convert_bond_data_json(data):
-    columns = ['bond_id', 'bond_nm', 'price', 'increase_rt', 'stock_nm', 'sprice','sincrease_rt', 'pb', 'convert_price', 'convert_value', 'premium_rt',
+    columns = ['data_id', 'bond_id', 'bond_nm', 'price', 'increase_rt', 'stock_nm', 'sprice','sincrease_rt', 'pb', 'convert_price', 'convert_value', 'premium_rt',
                 'rating_cd', 'force_redeem_price', 'date']
     return constant.convertDBToJson(data, columns)
 
 def convert_jsl_temperature_json(data):
-    columns = ['price_dt', 'median_pb', 'median_pb_temperature', 'median_pe', 'median_pe_temperature', 'stock_count', 'IPO_count', 'st_count', 'index_point', 'date']
+    columns = ['data_id', 'median_pb', 'median_pb_temperature', 'median_pe', 'median_pe_temperature', 'stock_count', 'IPO_count', 'st_count', 'index_point', 'date']
     return constant.convertDBToJson(data, columns)
 
 def get_jsl_dividend_rate():

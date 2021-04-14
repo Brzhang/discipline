@@ -19,6 +19,13 @@ def showPE():
     getPEData.drewPEDateLines()
     '''把图片嵌入在网页中显示出来'''
 
+@service.route('/IndustryPE', methods=['GET'])
+def showIndustryPE():
+    print('showIndustryPE')
+    ret = getPEData.calcIndustryValue()
+    print(datetime.datetime.now())
+    return jsonify({'result':ret})
+
 @service.route('/MASystem', methods=['GET'])
 def showMASystem():
     ret = stock_strategy.MASystem()
@@ -64,7 +71,7 @@ def get_host_ip():
 if __name__=='__main__':
     scheduleDailyData()
     scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduleDailyData, 'cron', hour=17, minute=41)
+    scheduler.add_job(scheduleDailyData, 'cron', hour=17, minute=30)
     scheduler.start()
 
     app.register_blueprint(service)

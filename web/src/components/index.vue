@@ -35,7 +35,7 @@ export default {
   data () {
     return {
       tabNames: ['industryValue', 'JSLData', 'convertBond', 'MASystem', 'virtualAccount'],
-      tabsHandler: { },
+      tabsHandler: [],
       activeName: 'industryValue'
     }
   },
