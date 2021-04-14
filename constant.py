@@ -5,9 +5,9 @@ import pandas
 DataStartDate='2017-01-01'
 fileType='png'
 drawDpi=200
-HQServerIP='119.147.212.81'
-HQServerPort=7709
-EXHQServerIP='61.152.107.141'
+HQServerIP='106.120.74.86'
+HQServerPort=7711
+EXHQServerIP='112.74.214.43'
 EXHQServerPort=7727
 PEDataUrl='http://47.97.204.47/syl/'
 ZZ800fileName = '000906cons.xls'
