@@ -1,6 +1,6 @@
 <template>
   <div class="tab-container">
-    <el-tabs v-model="activeName" type="border-card" style="margin-top:15px;" @tab-click="handleClick">
+    <el-tabs v-model="activeName" type="border-card" style="margin-top:0px;" @tab-click="handleClick">
       <el-tab-pane label="行业估值" :name="tabNames[0]">
         <industryValue :ref="tabNames[0]" />
       </el-tab-pane>
@@ -61,6 +61,6 @@ export default {
 
 <style scoped>
   .tab-container {
-    margin: 30px;
+    margin: 0px;
   }
 </style>

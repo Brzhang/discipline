@@ -1,17 +1,15 @@
 <template>
   <el-container style="border:1px solid #eee;">
-    <el-popover
-      placement="top-start"
-      title="K 线图"
-      v-model="kDialogVisible"
+    <el-dialog
+      :visible.sync="kDialogVisible"
       center
       trigger="manual"
+      top=0
       height="100%"
       width="100%"
     >
-      <el-button type="primary" size="mini" plain @click="kDialogVisible=false">X</el-button>
-      <KChart ref="KChartDailog" style="height:900px; width:1500px" />
-    </el-popover>
+      <KChart ref="KChartDailog" style="height:900px; width:1600px" />
+    </el-dialog>
     <el-table v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
       <el-table-column
         align="center"

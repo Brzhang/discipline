@@ -1,5 +1,5 @@
 <template>
-   <div :id='kChartID' style="margin:0 auto; width=1500px; height=900px"></div>
+   <div :id='kChartID' style="margin:0 0 0 0; width=100%; height=100%"></div>
 </template>
 
 <script>
@@ -37,9 +37,9 @@ export default {
           textAlign: 'left'
         },
         grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
+          left: '0',
+          right: '0',
+          bottom: '0',
           containLabel: true
         },
         toolbox: {
@@ -52,12 +52,12 @@ export default {
           data: this.data.lineNames
         },
         dataZoom: [{
-            startValue: this.data.x[0]
+          startValue: this.data.x[0]
         }, {
-            type: 'inside'
+          type: 'inside'
         }],
         tooltip: {
-            trigger: 'axis'
+          trigger: 'axis'
         },
         xAxis: {
           data: this.data.x
