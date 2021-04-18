@@ -48,7 +48,16 @@ export default {
           }
         },
         legend: {
+          right: '30',
           data: this.data.lineNames
+        },
+        dataZoom: [{
+            startValue: this.data.x[0]
+        }, {
+            type: 'inside'
+        }],
+        tooltip: {
+            trigger: 'axis'
         },
         xAxis: {
           data: this.data.x
@@ -57,32 +66,32 @@ export default {
         series: [
           {
             type: 'line',
+            name: this.data.lineNames[0],
             data: this.data.Ys[0]
           },
           {
             type: 'line',
+            name: this.data.lineNames[1],
             data: this.data.Ys[1]
           },
           {
             type: 'line',
+            name: this.data.lineNames[2],
             data: this.data.Ys[2]
           },
           {
             type: 'line',
+            name: this.data.lineNames[3],
             data: this.data.Ys[3]
           },
           {
             type: 'line',
+            name: this.data.lineNames[4],
             data: this.data.Ys[4]
           }
         ]
       }
       this.kChart.setOption(option)
-      setTimeout(function () {
-        window.onresize = function () {
-          this.kChart.resize()
-        }
-      }, 200)
     }
   }
 }
