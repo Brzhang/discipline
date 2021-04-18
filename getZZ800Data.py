@@ -98,7 +98,7 @@ def getStocksdata(stockCodelist):
                 startDate = constant.DataStartDate
             else:
                 startDate = (startDate[0] + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-            if startDate != datetime.date.today().strftime('%Y-%m-%d'):
+            if startDate <= datetime.date.today().strftime('%Y-%m-%d'):
                 data = api.get_k_data(stock, startDate, datetime.date.today().strftime('%Y-%m-%d'))
                 if len(data) > 0:
                     saveStockData('c'+ stock, data)

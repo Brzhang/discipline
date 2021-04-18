@@ -108,6 +108,10 @@ def readStockInfoData(fileName):
         dataStock.columns = ['code', 'name', 'level1_hy_code', 'level1_hy_name', 'level2_hy_code', 'level2_hy_name', 'level3_hy_code', 'level3_hy_name',
                              'level4_hy_code', 'level4_hy_name', 'pe', 'dynamic_pe', 'pb', 'dyr']
         dataStock.drop(['level1_hy_code', 'level1_hy_name', 'level2_hy_code', 'level2_hy_name', 'level3_hy_code', 'level3_hy_name'], axis=1, inplace=True)
+        dataStock['dyr'] = dataStock.apply(lambda x: float(x['dyr']) if x['dyr'] != '-' else 0.0, axis=1)
+        dataStock['pe'] = dataStock.apply(lambda x: float(x['pe']) if x['pe'] != '-' else 0.0, axis=1)
+        dataStock['dynamic_pe'] = dataStock.apply(lambda x: float(x['dynamic_pe']) if x['dynamic_pe'] != '-' else 0.0, axis=1)
+        dataStock['pb'] = dataStock.apply(lambda x: float(x['pb']) if x['pb'] != '-' else 0.0, axis=1)
         return dataStock
     else:
         #os.remove('./Data/'+ fileName)
@@ -188,6 +192,10 @@ def saveData(data, dateName, table, type):
     if data is None:
         return
     conn = mysqlOp.connectMySQL()
+    if type == 'replace':
+        type = 'append'
+        sql = "delete from " + table + ' where data_id > 0'
+        mysqlOp.executeSQL(conn, sql)
     data['date'] = datetime.datetime.strptime(dateName, '%Y%m%d').date()
     data.to_sql(name=table, con = conn, if_exists=type, index=False)
     conn.close()

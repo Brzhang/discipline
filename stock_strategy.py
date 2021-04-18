@@ -50,7 +50,7 @@ def MASystem():
             Ys = [data['MA5'][120:].tolist(), data['MA10'][120:].tolist(), data['MA20'][120:].tolist(), data['MA60'][120:].tolist(), data['MA120'][120:].tolist()]
             colors = ['red','blue','green','yellow','black']
 
-            infoDic = {'opt':'buy', 'vol':'0.3', 'code':stockInfo[0], 'name':stockInfo[1], 'price':price, 'HY': stockInfo[3], 'dynamicPE':stockInfo[5], 
+            infoDic = {'opt':'buy', 'vol':'0.3', 'code':stockInfo[1], 'name':stockInfo[2], 'price':price, 'HY': stockInfo[4], 'dynamicPE':stockInfo[5], 
                     'PE':stockInfo[6],'PB':stockInfo[7], '5Cost':data.at[lastIndex-5,'close'], '10Cost':data.at[lastIndex-10,'close'], 
                     '20Cost':data.at[lastIndex-20,'close'],'60Cost':data.at[lastIndex-60,'close'], '120Cost':data.at[lastIndex-120,'close'],
                     'values':{'lineNames':lineNames, 'x':data['date'][120:].tolist(),'Ys':Ys, 'colors': colors}}
