@@ -63,7 +63,7 @@ export default {
   methods: {
     getDataList () {
       this.loading = true
-      var url = 'http://10.100.151.13:8089/MASystem'
+      var url = 'http://localhost:8089/MASystem'
       axios.get(url)
         .then((res) => {
           this.list = res.data.result

@@ -54,7 +54,7 @@ export default {
   methods: {
     getTotalAValue () {
       this.Aloading = true
-      var url = 'http://10.100.151.13:8089/JSLTemperature'
+      var url = 'http://localhost:8089/JSLTemperature'
       axios.get(url)
         .then((res) => {
           this.totalA = res.data
@@ -67,7 +67,7 @@ export default {
     },
     getDataList () {
       this.loading = true
-      var url = 'http://10.100.151.13:8089/IndustryPE'
+      var url = 'http://localhost:8089/IndustryPE'
       axios.get(url)
         .then((res) => {
           this.industryValue = res.data.result

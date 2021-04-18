@@ -19,6 +19,11 @@ def showPE():
     getPEData.drewPEDateLines()
     '''把图片嵌入在网页中显示出来'''
 
+@service.route('/update', methods=['GET'])
+def updateDB():
+    scheduleDailyData()
+    return ''
+
 @service.route('/IndustryPE', methods=['GET'])
 def showIndustryPE():
     print('showIndustryPE')
@@ -69,13 +74,13 @@ def get_host_ip():
     return ip
 
 if __name__=='__main__':
-    scheduleDailyData()
+    #scheduleDailyData()
     scheduler = BackgroundScheduler()
     scheduler.add_job(scheduleDailyData, 'cron', hour=17, minute=30)
     scheduler.start()
 
     app.register_blueprint(service)
-    app.run(host=get_host_ip(), port=8089, debug=True)
+    app.run(host='localhost', port=8089, debug=True)
     
     #getPEData.drewPEDateLines()
     #stock_strategy.MAAvgSystem()
