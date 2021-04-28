@@ -5,7 +5,7 @@ import jisilu_data
 from apscheduler.schedulers.background import BackgroundScheduler
 import datetime
 import time
-from flask import Flask, Blueprint, render_template, jsonify
+from flask import Flask, Blueprint, render_template, jsonify, request
 import constant
 import flask_cors
 import socket
@@ -30,6 +30,11 @@ def showIndustryPE():
     ret = getPEData.calcIndustryValue()
     print(datetime.datetime.now())
     return jsonify({'result':ret})
+
+@service.route('/IndustryPELinesData', methods=['GET'])
+def showIndustryPELinesData():
+    hycode = request.args.get('code')
+    return getPEData.getPEDataLinesData(hycode)
 
 @service.route('/MASystem', methods=['GET'])
 def showMASystem():

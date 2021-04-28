@@ -226,6 +226,17 @@ def drewPEDateLines():
         Ys = [df['dynamic_pe'], df['pe_avg_month'], df['pe_avg_3month'], df['pe_avg_6month'], df['pe_avg_year']]
         colors = ['red','blue','green','yellow','black']
         drawLine.drawLines(df['date'], Ys, lineNames, colors ,'PE-'+ code['hy_code'], './Data/Pics/' + df['hy_name'][0]).close()
+
+def getPEDataLinesData(hycode):
+    data = getHYDataFromDB('pe_data', hycode)
+    lineNames = ['dynamicPE', 'MonthAvg', '3MonthAvg', '6MonthAvg','YearAvg']
+    df = pandas.DataFrame(data)
+    df.columns = data[0].keys()
+    df['date'] = df.apply(lambda x: x['date'].strftime('%Y%m%d'), axis=1)
+    Ys = [df['dynamic_pe'].tolist(), df['pe_avg_month'].tolist(), df['pe_avg_3month'].tolist(), df['pe_avg_6month'].tolist(), df['pe_avg_year'].tolist()]
+    colors = ['red','blue','green','yellow','black']
+    value = {'industry_id':hycode, 'values':{'lineNames':lineNames, 'x':df['date'].tolist(),'Ys':Ys, 'colors': colors}}
+    return value
     
 def calcIndustryValue():
     result: List[Any] = []

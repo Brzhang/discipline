@@ -10,7 +10,7 @@
     >
       <KChart ref="KChartDailog" style="height:900px; width:1600px" />
     </el-dialog>
-    <el-table v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
+    <el-table height="920" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
       <el-table-column
         align="center"
         label="序号"
@@ -78,7 +78,7 @@ export default {
       for (let index = 0; index < this.list.length; index++) {
         if (this.list[index].code === code) {
           this.kDialogVisible = true
-          this.$refs.KChartDailog.showChart(this.list[index].code + this.list[index].name, this.list[index].values)
+          this.$refs.KChartDailog.showChart(this.list[index].code + '-' + this.list[index].name, this.list[index].values)
           return
         }
       }
