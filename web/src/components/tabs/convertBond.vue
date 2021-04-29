@@ -6,22 +6,22 @@
       <el-table-column
         align="center"
         label="序号"
-        width="65"
+        width="45"
         type="index"
       />
-      <el-table-column width="50px" align="center" label="转债代码" header-align="center" prop="bond_id" />
-      <el-table-column width="50px" align="center" label="转债名称" header-align="center" prop="bond_nm" />
-      <el-table-column width="80px" align="center" label="现价" sortable header-align="center" prop="price" />
-      <el-table-column width="100px" align="center" label="涨跌幅" sortable header-align="center" prop="increase_rt" />
-      <el-table-column width="80px" align="center" label="正股名" header-align="center" prop="stock_nm" />
-      <el-table-column width="180px" align="center" label="正股价" sortable header-align="center" prop="sprice" />
-      <el-table-column width="100px" align="center" label="正股涨跌" sortable header-align="center" prop="sincrease_rt" />
-      <el-table-column width="80px" align="center" label="PB" sortable header-align="center" prop="pb" />
-      <el-table-column width="80px" align="center" label="转股价" sortable header-align="center" prop="convert_price" />
-      <el-table-column width="80px" align="center" label="转股价值" sortable header-align="center" prop="convert_value" />
-      <el-table-column width="80px" align="center" label="溢价率" sortable header-align="center" prop="premium_rt" />
-      <el-table-column width="80px" align="center" label="评级" sortable header-align="center" prop="rating_cd" />
-      <el-table-column width="80px" align="center" label="强赎触发价" sortable header-align="center" prop="force_redeem_price" />
+      <el-table-column width="100px" align="center" label="转债代码" header-align="center" prop="bond_id" />
+      <el-table-column width="120px" align="center" label="转债名称" header-align="center" prop="bond_nm" />
+      <el-table-column width="120px" align="center" label="现价" sortable header-align="center" prop="price" />
+      <el-table-column width="120px" align="center" label="涨跌幅" sortable header-align="center" prop="increase_rt" />
+      <el-table-column width="120px" align="center" label="正股名" header-align="center" prop="stock_nm" />
+      <el-table-column width="120px" align="center" label="正股价" sortable header-align="center" prop="sprice" />
+      <el-table-column width="120px" align="center" label="正股涨跌" sortable header-align="center" prop="sincrease_rt" />
+      <el-table-column width="100px" align="center" label="PB" sortable header-align="center" prop="pb" />
+      <el-table-column width="120px" align="center" label="转股价" sortable header-align="center" prop="convert_price" />
+      <el-table-column width="120px" align="center" label="转股价值" sortable header-align="center" prop="convert_value" />
+      <el-table-column width="120px" align="center" label="溢价率" sortable header-align="center" prop="premium_rt" />
+      <el-table-column width="100px" align="center" label="评级" sortable header-align="center" prop="rating_cd" />
+      <el-table-column width="120px" align="center" label="强赎触发价" sortable header-align="center" prop="force_redeem_price" />
     </el-table>
   </el-container>
 </template>

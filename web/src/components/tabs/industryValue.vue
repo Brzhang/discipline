@@ -13,8 +13,8 @@
     <el-row>
       <el-col :span="24">
         <!-- 'price_dt', 'median_pb', 'median_pb_temperature', 'median_pe', 'median_pe_temperature', 'stock_count', 'IPO_count', 'st_count', 'index_point', 'date' -->
-        <el-table v-loading="Aloading" element-loading-text="别着急，重要的数据可以多等等" :data="totalA" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
-          <el-table-column align="center" label="序号"  width="65" type="index" />
+        <el-table v-loading="Aloading" element-loading-text="别着急，重要的数据可以多等等" :data="totalA" stripe border fit highlight-current-row style="width: 100%; font-size:12px;">
+          <el-table-column align="center" label="序号"  width="45" type="index" />
           <el-table-column width="150px" align="center" label="日期" header-align="center" prop="date" />
           <el-table-column width="150px" align="center" label="PB中位数" sortable header-align="center" prop="median_pb" />
           <el-table-column width="180px" align="center" label="PB中位数温度" sortable header-align="center" prop="median_pb_temperature" />
@@ -30,15 +30,16 @@
     <br/>
     <el-row>
       <el-col :span="24">
-        <el-table height="920"  v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="industryValue" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
-          <el-table-column align="center" label="序号" width="65" type="index" />
-          <el-table-column width="150px" align="center" label="行业代码" header-align="center" prop="industry_id" />
-          <el-table-column width="250px" align="center" label="行业名称" header-align="center" prop="industry_name" />
+        <el-table height="920" :row-class-name="tableRowClassName"  v-loading="loading" element-loading-text="别着急，重要的数据可以多等等"
+         :data="industryValue" border fit highlight-current-row style="width: 100%; font-size:12px;">
+          <el-table-column align="center" label="序号" width="45" type="index" />
+          <el-table-column width="130px" align="center" label="行业代码" header-align="center" prop="industry_id" />
+          <el-table-column width="240px" align="center" label="行业名称" header-align="center" prop="industry_name" />
           <el-table-column width="80px" align="center" label="PE" sortable header-align="center" prop="pe" />
-          <el-table-column width="180px" align="center" label="PE温度" sortable header-align="center" prop="pe_temperature" />
-          <el-table-column width="100px" align="center" label="股票数" sortable header-align="center" prop="stock_num" />
-          <el-table-column width="120px" align="center" label="亏损股票数" sortable header-align="center" prop="lost_num" />
-          <el-table-column width="600px" align="center" label="股票(中证800)" header-align="center" prop="stocks" />
+          <el-table-column width="120px" align="center" label="PE温度" sortable header-align="center" prop="pe_temperature" />
+          <el-table-column width="90px" align="center" label="股票数" sortable header-align="center" prop="stock_num" />
+          <el-table-column width="110px" align="center" label="亏损股票数" sortable header-align="center" prop="lost_num" />
+          <el-table-column width="900px" align="center" label="股票(中证800)" header-align="center" prop="stocks" />
           <el-table-column label="">
           <template slot-scope="scope">
             <el-button size="mini" @click="handleView(scope.row.industry_id)">看图</el-button>
@@ -124,7 +125,18 @@ export default {
           return
         }
       }
+    },
+    tableRowClassName ({row, rowIndex}) {
+      if (this.industryValue[rowIndex].pe_temperature < 25) {
+        return 'info-row'
+      }
+      return ''
     }
   }
 }
 </script>
+<style>
+.el-table .info-row {
+  background-color: burlywood;
+}
+</style>
