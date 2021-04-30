@@ -248,7 +248,7 @@ def calcIndustryValue():
             where pe.hy_code = ' + str(row['hy_code'])
         data = mysqlOp.fetchOne(conn, sql)
         temperature = float('%.1f' %(data['pos']*100/data['total']))
-        sql = 'select GROUP_CONCAT(name) from stock_info where level4_hy_code =' + str(row['hy_code']) + ' and name \
+        sql = 'select GROUP_CONCAT(CONCAT(" ",name," ")) from stock_info where level4_hy_code =' + str(row['hy_code']) + ' and name \
             in (select name from zz800list where date=(select max(date) from zz800list))'
         stocks = mysqlOp.fetchOne(conn, sql)
         value = {'industry_id':row['hy_code'], 'industry_name':row['hy_name'], 'pe':row['dynamic_pe'], 'pe_temperature': temperature, 

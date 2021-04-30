@@ -30,8 +30,8 @@
     <br/>
     <el-row>
       <el-col :span="24">
-        <el-table height="920" :row-class-name="tableRowClassName"  v-loading="loading" element-loading-text="别着急，重要的数据可以多等等"
-         :data="industryValue" border fit highlight-current-row style="width: 100%; font-size:12px;">
+        <el-table height="920" :row-class-name="tableRowClassName" :cell-style="cellStyleBG" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等"
+        ref="PETable" @sort-change="dataSorted" :data="industryValue" border fit highlight-current-row style="width: 100%; font-size:12px;">
           <el-table-column align="center" label="序号" width="45" type="index" />
           <el-table-column width="130px" align="center" label="行业代码" header-align="center" prop="industry_id" />
           <el-table-column width="240px" align="center" label="行业名称" header-align="center" prop="industry_name" />
@@ -61,6 +61,7 @@ export default {
     return {
       totalA: [],
       industryValue: [],
+      sortedIndustryValue: [],
       loading: false,
       Aloading: false,
       kDialogVisible: false
@@ -90,6 +91,7 @@ export default {
       axios.get(url)
         .then((res) => {
           this.industryValue = res.data.result
+          this.sortedIndustryValue = this.industryValue
           this.loading = false
         })
         .catch((error) => {
@@ -126,17 +128,48 @@ export default {
         }
       }
     },
+    setTemperatureGBColor (data) {
+      if (data < 10) {
+        return 'background-color: rgb(51,255,0)'
+      } else if (data < 20) {
+        return 'background-color: rgb(102, 255, 0)'
+      } else if (data < 30) {
+        return 'background-color: rgb(153, 255, 0)'
+      } else if (data < 40) {
+        return 'background-color: rgb(204, 255, 0)'
+      } else if (data < 50) {
+        return 'background-color: rgb(255, 255, 0)'
+      } else if (data < 60) {
+        return 'background-color: rgb(255, 204, 0)'
+      } else if (data < 70) {
+        return 'background-color: rgb(255, 154, 0)'
+      } else if (data < 80) {
+        return 'background-color: rgb(255, 103, 0)'
+      } else if (data < 90) {
+        return 'background-color: rgb(255, 51, 0)'
+      } else {
+        return 'background-color: rgb(255, 0, 0)'
+      }
+    },
     tableRowClassName ({row, rowIndex}) {
-      if (this.industryValue[rowIndex].pe_temperature < 25) {
-        return 'info-row'
+      if (this.sortedIndustryValue[rowIndex].pe_temperature < 10) {
+        // return 'info-row'
       }
       return ''
+    },
+    cellStyleBG ({row, column, rowIndex, columnIndex}) {
+      if (columnIndex === 4 && this.sortedIndustryValue[rowIndex].pe !== 0) {
+        return this.setTemperatureGBColor(this.sortedIndustryValue[rowIndex].pe_temperature)
+      }
+    },
+    dataSorted ({column, prop, order}) {
+      this.sortedIndustryValue = this.$refs.PETable.tableData
     }
   }
 }
 </script>
 <style>
 .el-table .info-row {
-  background-color: burlywood;
+  background-color: green;
 }
 </style>

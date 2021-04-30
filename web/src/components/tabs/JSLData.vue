@@ -1,6 +1,7 @@
 <template>
   <el-container style="border:1px solid #eee;">
-    <el-table height="920" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
+    <el-table height="920" ref="JSLDataTable" @sort-change="dataSorted" :cell-style="cellStyleBG" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等"
+    :data="list" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
       <el-table-column
         align="center"
         label="序号"
@@ -45,6 +46,7 @@ export default {
   data () {
     return {
       list: [],
+      sortedList: [],
       loading: false
     }
   },
@@ -58,6 +60,7 @@ export default {
       axios.get(url)
         .then((res) => {
           this.list = res.data
+          this.sortedList = this.list
           this.loading = false
         })
         .catch((error) => {
@@ -65,6 +68,40 @@ export default {
           console.error(error)
           this.loading = false
         })
+    },
+    setTemperatureGBColor (data) {
+      if (data < 10) {
+        return 'background-color: rgb(51,255,0)'
+      } else if (data < 20) {
+        return 'background-color: rgb(102, 255, 0)'
+      } else if (data < 30) {
+        return 'background-color: rgb(153, 255, 0)'
+      } else if (data < 40) {
+        return 'background-color: rgb(204, 255, 0)'
+      } else if (data < 50) {
+        return 'background-color: rgb(255, 255, 0)'
+      } else if (data < 60) {
+        return 'background-color: rgb(255, 204, 0)'
+      } else if (data < 70) {
+        return 'background-color: rgb(255, 154, 0)'
+      } else if (data < 80) {
+        return 'background-color: rgb(255, 103, 0)'
+      } else if (data < 90) {
+        return 'background-color: rgb(255, 51, 0)'
+      } else {
+        return 'background-color: rgb(255, 0, 0)'
+      }
+    },
+    cellStyleBG ({row, column, rowIndex, columnIndex}) {
+      if (columnIndex === 7) {
+        return this.setTemperatureGBColor(this.sortedList[rowIndex].pe_temperature)
+      }
+      if (columnIndex === 9) {
+        return this.setTemperatureGBColor(this.sortedList[rowIndex].pb_temperature)
+      }
+    },
+    dataSorted ({column, prop, order}) {
+      this.sortedList = this.$refs.JSLDataTable.tableData
     }
   }
 }
