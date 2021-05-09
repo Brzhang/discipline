@@ -23,6 +23,8 @@
       <el-table-column width="100px" align="center" label="名称" header-align="center" prop="name" />
       <el-table-column width="80px" align="center" label="收盘价" header-align="center" prop="price" />
       <el-table-column width="180px" align="center" label="行业" sortable header-align="center" prop="HY" />
+      <el-table-column width="100px" align="center" label="行业PE" sortable header-align="center" prop="HYPE" />
+      <el-table-column width="100px" align="center" label="行业温度" sortable header-align="center" prop="HYPETemperature" />
       <el-table-column width="100px" align="center" label="动态PE" sortable header-align="center" prop="dynamicPE" />
       <el-table-column width="80px" align="center" label="PE" sortable header-align="center" prop="PE" />
       <el-table-column width="80px" align="center" label="PB" sortable header-align="center" prop="PB" />
@@ -33,9 +35,7 @@
       <el-table-column width="100px" align="center" label="MA120抵扣" header-align="center" prop="120Cost" />
       <el-table-column label="">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleView(scope.row.code)">看图</el-button>
+          <el-button size="mini" @click="handleView(scope.row.code)">看图</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -44,6 +44,7 @@
 
 <script>
 import axios from 'axios'
+import { baseUrl } from './'
 import KChart from './KChart'
 export default {
   name: 'MASystem',
@@ -61,7 +62,7 @@ export default {
   methods: {
     getDataList () {
       this.loading = true
-      var url = 'http://localhost:8089/MASystem'
+      var url = baseUrl + 'MASystem'
       axios.get(url)
         .then((res) => {
           this.list = res.data.result

@@ -28,6 +28,7 @@
 
 <script>
 import axios from 'axios'
+import { baseUrl } from './'
 export default {
   name: 'ConvertBond',
   data () {
@@ -42,7 +43,7 @@ export default {
   methods: {
     getDataList () {
       this.loading = true
-      var url = 'http://localhost:8089/ConvertBond'
+      var url = baseUrl + 'ConvertBond'
       axios.get(url)
         .then((res) => {
           this.list = res.data

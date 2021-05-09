@@ -14,7 +14,9 @@ dtype={
         '行业名称':str,
         '证券代码':str,
         '四级行业代码':str
-    }   
+    }
+
+calcedIndustryPE = pandas.DataFrame()
 
 def filerData(data):
     data.drop(data[data['行业代码'].apply(lambda x: len(x)<8)].index, inplace=True)
@@ -255,6 +257,8 @@ def calcIndustryValue():
                     'stock_num':row['stocknum'], 'lost_num':row['lostnum'], 'stocks': stocks[0]}
         result.append(value)
     conn.close()
+    global calcedIndustryPE
+    calcedIndustryPE = pandas.DataFrame(result)
     return result
 
 def getLastDate():

@@ -41,6 +41,7 @@
 
 <script>
 import axios from 'axios'
+import { baseUrl } from './'
 export default {
   name: 'JSLData',
   data () {
@@ -56,7 +57,7 @@ export default {
   methods: {
     getDataList () {
       this.loading = true
-      var url = 'http://localhost:8089/JSLData'
+      var url = baseUrl + 'JSLData'
       axios.get(url)
         .then((res) => {
           this.list = res.data
@@ -93,10 +94,10 @@ export default {
       }
     },
     cellStyleBG ({row, column, rowIndex, columnIndex}) {
-      if (columnIndex === 7) {
+      if (columnIndex === 8) {
         return this.setTemperatureGBColor(this.sortedList[rowIndex].pe_temperature)
       }
-      if (columnIndex === 9) {
+      if (columnIndex === 10) {
         return this.setTemperatureGBColor(this.sortedList[rowIndex].pb_temperature)
       }
     },

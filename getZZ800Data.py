@@ -87,21 +87,24 @@ def getLastStockDate(stockCode):
     conn.close()
     return ret
 
+def getStockData(api, stock):
+    print('get socket data :', stock)
+    creatStockTable('c' + stock)
+    startDate = getLastStockDate('c' + stock)
+    if startDate is None:
+        startDate = constant.DataStartDate
+    else:
+        startDate = (startDate[0] + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+    if startDate <= datetime.date.today().strftime('%Y-%m-%d'):
+        data = api.get_k_data(stock, startDate, datetime.date.today().strftime('%Y-%m-%d'))
+        if len(data) > 0:
+            saveStockData('c'+ stock, data)
+
 def getStocksdata(stockCodelist):
     api = TdxHq_API()
     with api.connect(constant.HQServerIP, constant.HQServerPort):
         for stock in stockCodelist:
-            print('get socket data :', stock)
-            creatStockTable('c' + stock)
-            startDate = getLastStockDate('c' + stock)
-            if startDate is None:
-                startDate = constant.DataStartDate
-            else:
-                startDate = (startDate[0] + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-            if startDate <= datetime.date.today().strftime('%Y-%m-%d'):
-                data = api.get_k_data(stock, startDate, datetime.date.today().strftime('%Y-%m-%d'))
-                if len(data) > 0:
-                    saveStockData('c'+ stock, data)
+            getStockData(api, stock)
 
 def getLastDate():
     sql = 'select tb.date from zz800list tb order by tb.date DESC'

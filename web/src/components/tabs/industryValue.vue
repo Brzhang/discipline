@@ -53,6 +53,7 @@
 
 <script>
 import axios from 'axios'
+import { baseUrl } from './'
 import KChart from './KChart'
 export default {
   name: 'ConvertBond',
@@ -74,7 +75,7 @@ export default {
   methods: {
     getTotalAValue () {
       this.Aloading = true
-      var url = 'http://localhost:8089/JSLTemperature'
+      var url = baseUrl + 'JSLTemperature'
       axios.get(url)
         .then((res) => {
           this.totalA = res.data
@@ -87,7 +88,7 @@ export default {
     },
     getDataList () {
       this.loading = true
-      var url = 'http://localhost:8089/IndustryPE'
+      var url = baseUrl + 'IndustryPE'
       axios.get(url)
         .then((res) => {
           this.industryValue = res.data.result
@@ -102,7 +103,7 @@ export default {
     },
     drawPELines (hycode, name) {
       this.loading = true
-      var url = 'http://localhost:8089/IndustryPELinesData'
+      var url = baseUrl + 'IndustryPELinesData'
       axios.get(url, {
         params: {
           code: hycode

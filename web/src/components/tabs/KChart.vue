@@ -21,6 +21,42 @@ export default {
     }
   },
   methods: {
+    makeSeries () {
+      let series = []
+      for (let i = 0; i < this.data.lineNames.length; i++) {
+        if (i === 0) {
+          series.push({
+            type: 'line',
+            name: this.data.lineNames[0],
+            data: this.data.Ys[0],
+            markLine: {
+              symbol: 'none',
+              label: {
+                position: 'end'
+              },
+              lineStyle: {
+                normal: {
+                  type: 'dotted',
+                  color: 'rgb(0, 0, 255)'
+                }
+              },
+              data: [{xAxis: this.data.x[this.data.x.length - 5], name: '5日抵扣', label: {formatter: '5日抵扣'}},
+                {xAxis: this.data.x[this.data.x.length - 10], name: '10日抵扣', label: {formatter: '10日抵扣'}},
+                {xAxis: this.data.x[this.data.x.length - 20], name: '20日抵扣', label: {formatter: '20日抵扣'}},
+                {xAxis: this.data.x[this.data.x.length - 60], name: '60日抵扣', label: {formatter: '60日抵扣'}},
+                {xAxis: this.data.x[this.data.x.length - 120], name: '120日抵扣', label: {formatter: '120日抵扣'}}]
+            }
+          })
+        } else {
+          series.push({
+            type: 'line',
+            name: this.data.lineNames[i],
+            data: this.data.Ys[i]
+          })
+        }
+      }
+      return series
+    },
     showChart (name, data) {
       this.kChartDivVisble = true
       this.stockName = name
@@ -63,33 +99,7 @@ export default {
           data: this.data.x
         },
         yAxis: { name: '价格' },
-        series: [
-          {
-            type: 'line',
-            name: this.data.lineNames[0],
-            data: this.data.Ys[0]
-          },
-          {
-            type: 'line',
-            name: this.data.lineNames[1],
-            data: this.data.Ys[1]
-          },
-          {
-            type: 'line',
-            name: this.data.lineNames[2],
-            data: this.data.Ys[2]
-          },
-          {
-            type: 'line',
-            name: this.data.lineNames[3],
-            data: this.data.Ys[3]
-          },
-          {
-            type: 'line',
-            name: this.data.lineNames[4],
-            data: this.data.Ys[4]
-          }
-        ]
+        series: this.makeSeries()
       }
       this.kChart.setOption(option)
     }
