@@ -47,7 +47,7 @@ def MASystem():
         if price > ma20 and ma20 > ma5 and ma5 > ma10:
             stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
             
-            lineNames = ['MA5', 'MA10', 'MA20', 'MA60','MA120']
+            lineNames = ['price', 'MA5', 'MA10', 'MA20', 'MA60', 'MA120']
             Ys = [data['close'][120:].tolist(), data['MA5'][120:].tolist(), data['MA10'][120:].tolist(), data['MA20'][120:].tolist(), data['MA60'][120:].tolist(), data['MA120'][120:].tolist()]
             colors = ['purple','red','blue','green','yellow','black']
 

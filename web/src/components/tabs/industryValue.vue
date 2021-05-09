@@ -111,7 +111,7 @@ export default {
       })
         .then((res) => {
           this.loading = false
-          this.$refs.KChartDailog.showChart(hycode + '_' + name, res.data.values)
+          this.$refs.KChartDailog.showChart(hycode + ' - ' + name, res.data.values)
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -124,7 +124,7 @@ export default {
       for (let index = 0; index < this.industryValue.length; index++) {
         if (this.industryValue[index].industry_id === code) {
           this.kDialogVisible = true
-          this.drawPELines(code, code + this.industryValue[index].industry_name)
+          this.drawPELines(code, this.industryValue[index].industry_name)
           return
         }
       }

@@ -9,6 +9,7 @@ from flask import Flask, Blueprint, render_template, jsonify, request
 import constant
 import flask_cors
 import socket
+import _thread
 
 app = Flask(__name__)
 flask_cors.CORS(app, supports_credentials=True)
@@ -61,8 +62,8 @@ def htmlInit():
      return render_template('./Demo.html',count = 10)
 
 def scheduleDailyData():
-    getPEData.getPEData(constant.get_last_weekday())
-    getZZ800Data.getZZ800List()
+    _thread.start_new_thread(getPEData.getPEData,(constant.get_last_weekday(),))
+    _thread.start_new_thread(getZZ800Data.getZZ800List,())
     jisilu_data.get_jsl_dividend_rate()
     jisilu_data.get_jsl_convert_bond_data()
     jisilu_data.get_jsl_temperature()
