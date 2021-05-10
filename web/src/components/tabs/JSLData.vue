@@ -1,13 +1,8 @@
 <template>
-  <el-container style="border:1px solid #eee;">
-    <el-table height="920" ref="JSLDataTable" @sort-change="dataSorted" :cell-style="cellStyleBG" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等"
-    :data="list" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
-      <el-table-column
-        align="center"
-        label="序号"
-        width="45"
-        type="index"
-      />
+  <el-container style="border:0px solid #eee;">
+    <el-table height="920px" ref="JSLDataTable" @sort-change="dataSorted" :cell-style="cellStyleBG" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等"
+    :data="list" stripe border fit highlight-current-row style="width: 100%; font-size:12px;">
+      <el-table-column align="center" label="序号" width="45" type="index" />
     <!--代码，名称，价格，涨幅，成交额(万)，市值，PE TTM，PE温度，pb，pb温度，5年均股息率，股息率，静态股息率，
     最新年报ROE，5年均ROE，5年营收增长，5年利润增长，5年现金流增长，5年分红率增长，净利同比增长，有息负债率，行业名称
     'stock_id', 'stock_nm', 'price', 'increase_rt', 'volume', 'total_value','pe', 'pe_temperature', 'pb', 'pb_temperature','aft_dividend', 'dividend_rate', 'dividend_rate2',

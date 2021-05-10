@@ -1,14 +1,9 @@
 <template>
-  <el-container style="border:1px solid #eee;">
+  <el-container style="border:0px solid #eee;">
     <!--转债代码，转债名称，现价，涨跌幅，正股名，正股价， 正股涨跌，pb，转股价，转股价值，溢价率，评级，强赎触发价
     'bond_id', 'bond_nm', 'price', 'increase_rt', 'stock_nm', 'sprice','sincrease_rt', 'pb', 'convert_price', 'convert_value', 'premium_rt','rating_cd', 'force_redeem_price'-->
-    <el-table height="920" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
-      <el-table-column
-        align="center"
-        label="序号"
-        width="45"
-        type="index"
-      />
+    <el-table height="920px" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 100%; font-size:12px;">
+      <el-table-column align="center" label="序号" width="45" type="index" />
       <el-table-column width="100px" align="center" label="转债代码" header-align="center" prop="bond_id" />
       <el-table-column width="120px" align="center" label="转债名称" header-align="center" prop="bond_nm" />
       <el-table-column width="120px" align="center" label="现价" sortable header-align="center" prop="price" />

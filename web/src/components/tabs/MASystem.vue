@@ -1,22 +1,11 @@
 <template>
-  <el-container style="border:1px solid #eee;">
-    <el-dialog
-      :visible.sync="kDialogVisible"
-      center
-      trigger="manual"
-      top=0
-      height="100%"
-      width="100%"
-    >
+  <el-container style="border:0px solid #eee;">
+    <el-dialog :visible.sync="kDialogVisible" center trigger="manual" top=0 height="100%" width="100%">
       <KChart ref="KChartDailog" style="height:900px; width:1600px" />
     </el-dialog>
-    <el-table height="920" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
-      <el-table-column
-        align="center"
-        label="序号"
-        width="65"
-        type="index"
-      />
+    <!-- <div style="font-size:10px">策略：收盘价高于20日均线，20、60多头排列，5、10多头排列预上穿20日均线。行业估值低于25历史百分位</div> -->
+    <el-table height="920px" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 100%; font-size:12px;">
+      <el-table-column align="center" label="序号" width="65" type="index" />
       <el-table-column width="50px" align="center" label="操作" header-align="center" prop="opt" />
       <el-table-column width="50px" align="center" label="仓位" header-align="center" prop="vol" />
       <el-table-column width="80px" align="center" label="代码" sortable header-align="center" prop="code" />

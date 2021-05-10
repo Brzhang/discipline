@@ -44,7 +44,8 @@ def MASystem():
         ma20 = data.at[lastIndex,'MA20']
         ma60 = data.at[lastIndex,'MA60']
         ma120 = data.at[lastIndex,'MA120']
-        if price > ma20 and ma20 > ma5 and ma5 > ma10:
+        deltaMA60 = ma60 - data.at[lastIndex-1, 'MA60']
+        if price > ma20 and ma20 > ma5 and ma5 > ma10 and ma20 > ma60 and deltaMA60 > 0:
             stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
             
             lineNames = ['price', 'MA5', 'MA10', 'MA20', 'MA60', 'MA120']

@@ -1,52 +1,41 @@
 <template>
-  <el-container style="border:1px solid #eee;" direction="vertical">
-    <el-dialog
-      :visible.sync="kDialogVisible"
-      center
-      trigger="manual"
-      top=0
-      height="100%"
-      width="100%"
-    >
+  <el-container style="border:0px solid #eee;" direction="vertical">
+    <el-dialog :visible.sync="kDialogVisible" center trigger="manual" top=0 height="100%" width="100%">
       <KChart ref="KChartDailog" style="height:900px; width:1600px" />
     </el-dialog>
     <el-row>
-      <el-col :span="24">
-        <!-- 'price_dt', 'median_pb', 'median_pb_temperature', 'median_pe', 'median_pe_temperature', 'stock_count', 'IPO_count', 'st_count', 'index_point', 'date' -->
-        <el-table v-loading="Aloading" element-loading-text="别着急，重要的数据可以多等等" :data="totalA" stripe border fit highlight-current-row style="width: 100%; font-size:12px;">
-          <el-table-column align="center" label="序号"  width="45" type="index" />
-          <el-table-column width="150px" align="center" label="日期" header-align="center" prop="date" />
-          <el-table-column width="150px" align="center" label="PB中位数" sortable header-align="center" prop="median_pb" />
-          <el-table-column width="180px" align="center" label="PB中位数温度" sortable header-align="center" prop="median_pb_temperature" />
-          <el-table-column width="180px" align="center" label="PE中位数" sortable header-align="center" prop="median_pe" />
-          <el-table-column width="180px" align="center" label="PE中位数温度" header-align="center" prop="median_pe_temperature" />
-          <el-table-column width="180px" align="center" label="股票数量" sortable header-align="center" prop="stock_count" />
-          <el-table-column width="100px" align="center" label="IPO数量" sortable header-align="center" prop="IPO_count" />
-          <el-table-column width="100px" align="center" label="ST数量" sortable header-align="center" prop="st_count" />
-          <el-table-column width="80px" align="center" label="指数" sortable header-align="center" prop="index_point" />
-        </el-table>
-      </el-col>
+      <!-- 'price_dt', 'median_pb', 'median_pb_temperature', 'median_pe', 'median_pe_temperature', 'stock_count', 'IPO_count', 'st_count', 'index_point', 'date' -->
+      <el-table v-loading="Aloading" element-loading-text="别着急，重要的数据可以多等等" :data="totalA" stripe border fit highlight-current-row style="width: 100%; font-size:12px;">
+        <el-table-column align="center" label="序号"  width="45" type="index" />
+        <el-table-column width="150px" align="center" label="日期" header-align="center" prop="date" />
+        <el-table-column width="150px" align="center" label="PB中位数" sortable header-align="center" prop="median_pb" />
+        <el-table-column width="180px" align="center" label="PB中位数温度" sortable header-align="center" prop="median_pb_temperature" />
+        <el-table-column width="180px" align="center" label="PE中位数" sortable header-align="center" prop="median_pe" />
+        <el-table-column width="180px" align="center" label="PE中位数温度" header-align="center" prop="median_pe_temperature" />
+        <el-table-column width="180px" align="center" label="股票数量" sortable header-align="center" prop="stock_count" />
+        <el-table-column width="100px" align="center" label="IPO数量" sortable header-align="center" prop="IPO_count" />
+        <el-table-column width="100px" align="center" label="ST数量" sortable header-align="center" prop="st_count" />
+        <el-table-column width="80px" align="center" label="指数" sortable header-align="center" prop="index_point" />
+      </el-table>
     </el-row>
     <br/>
     <el-row>
-      <el-col :span="24">
-        <el-table height="920" :row-class-name="tableRowClassName" :cell-style="cellStyleBG" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等"
-        ref="PETable" @sort-change="dataSorted" :data="industryValue" border fit highlight-current-row style="width: 100%; font-size:12px;">
-          <el-table-column align="center" label="序号" width="45" type="index" />
-          <el-table-column width="130px" align="center" label="行业代码" header-align="center" prop="industry_id" />
-          <el-table-column width="240px" align="center" label="行业名称" header-align="center" prop="industry_name" />
-          <el-table-column width="80px" align="center" label="PE" sortable header-align="center" prop="pe" />
-          <el-table-column width="120px" align="center" label="PE温度" sortable header-align="center" prop="pe_temperature" />
-          <el-table-column width="90px" align="center" label="股票数" sortable header-align="center" prop="stock_num" />
-          <el-table-column width="110px" align="center" label="亏损股票数" sortable header-align="center" prop="lost_num" />
-          <el-table-column width="900px" align="center" label="股票(中证800)" header-align="center" prop="stocks" />
-          <el-table-column label="">
-          <template slot-scope="scope">
-            <el-button size="mini" @click="handleView(scope.row.industry_id)">看图</el-button>
-          </template>
-        </el-table-column>
-        </el-table>
-      </el-col>
+    <el-table height="920" :row-class-name="tableRowClassName" :cell-style="cellStyleBG" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等"
+      ref="PETable" @sort-change="dataSorted" :data="industryValue" border fit highlight-current-row style="width: 100%; font-size:12px;">
+        <el-table-column align="center" label="序号" width="45" type="index" />
+        <el-table-column width="130px" align="center" label="行业代码" header-align="center" prop="industry_id" />
+        <el-table-column width="240px" align="center" label="行业名称" header-align="center" prop="industry_name" />
+        <el-table-column width="80px" align="center" label="PE" sortable header-align="center" prop="pe" />
+        <el-table-column width="120px" align="center" label="PE温度" sortable header-align="center" prop="pe_temperature" />
+        <el-table-column width="90px" align="center" label="股票数" sortable header-align="center" prop="stock_num" />
+        <el-table-column width="110px" align="center" label="亏损股票数" sortable header-align="center" prop="lost_num" />
+        <el-table-column width="900px" align="center" label="股票(中证800)" header-align="center" prop="stocks" />
+        <el-table-column label="">
+        <template slot-scope="scope">
+          <el-button size="mini" @click="handleView(scope.row.industry_id)">看图</el-button>
+        </template>
+      </el-table-column>
+      </el-table>
     </el-row>
   </el-container>
 </template>

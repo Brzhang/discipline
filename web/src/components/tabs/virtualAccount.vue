@@ -1,12 +1,7 @@
 <template>
-  <el-container style="border:1px solid #eee;">
-    <el-table height="920" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 95%; font-size:12px;">
-      <el-table-column
-        align="center"
-        label="序号"
-        width="65"
-        type="index"
-      />
+  <el-container style="border:0px solid #eee;">
+    <el-table height="920px" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 100%; font-size:12px;">
+      <el-table-column align="center" label="序号" width="65px" type="index" />
       <el-table-column width="80px" align="center" label="代码" sortable header-align="center" prop="code" />
       <el-table-column width="100px" align="center" label="名称" header-align="center" prop="name" />
       <el-table-column width="50px" align="center" label="数量" header-align="center" prop="vol" />
