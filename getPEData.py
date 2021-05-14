@@ -16,7 +16,7 @@ dtype={
         '四级行业代码':str
     }
 
-calcedIndustryPE = pandas.DataFrame()
+calcedIndustryPE = {'time': datetime.datetime.now(), 'data': []}
 
 def filerData(data):
     data.drop(data[data['行业代码'].apply(lambda x: len(x)<8)].index, inplace=True)
@@ -241,6 +241,11 @@ def getPEDataLinesData(hycode):
     return value
     
 def calcIndustryValue():
+    global calcedIndustryPE
+    signTime = datetime.datetime.strptime(calcedIndustryPE['time'].strftime('%Y-%m-%d') + " 17:30:00", '%Y-%m-%d %H:%M:%S')
+    if len(calcedIndustryPE['data']) > 0 and (datetime.datetime.now() < signTime or calcedIndustryPE['time'] > signTime):
+        return calcedIndustryPE['data']
+    calcedIndustryPE['data'].clear()
     result: List[Any] = []
     sql = 'select dynamic_pe, hy_code, hy_name, stocknum, lostnum  from pe_data where date=(select max(date) from pe_data) and stocknum>0'
     conn = mysqlOp.connectMySQL()
@@ -257,8 +262,8 @@ def calcIndustryValue():
                     'stock_num':row['stocknum'], 'lost_num':row['lostnum'], 'stocks': stocks[0]}
         result.append(value)
     conn.close()
-    global calcedIndustryPE
-    calcedIndustryPE = pandas.DataFrame(result)
+    calcedIndustryPE['time'] = datetime.datetime.now()
+    calcedIndustryPE['data'] = result
     return result
 
 def getLastDate():

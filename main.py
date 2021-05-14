@@ -2,6 +2,7 @@ import getPEData
 import getZZ800Data
 import stock_strategy
 import jisilu_data
+import trade
 from apscheduler.schedulers.background import BackgroundScheduler
 import datetime
 import time
@@ -14,11 +15,6 @@ import _thread
 app = Flask(__name__)
 flask_cors.CORS(app, supports_credentials=True)
 service = Blueprint('discipline', __name__, static_folder='./web', template_folder='./web')
-
-@service.route('/showPE', methods=['GET'])
-def showPE():
-    getPEData.drewPEDateLines()
-    '''把图片嵌入在网页中显示出来'''
 
 @service.route('/update', methods=['GET'])
 def updateDB():
@@ -57,9 +53,13 @@ def showConvertBondData():
 def showJSLTemperature():
     return jisilu_data.convert_jsl_temperature_json(jisilu_data.get_jsl_temperature_from_db())
 
-@service.route('/', methods=['GET'])
-def htmlInit():
-     return render_template('./Demo.html',count = 10)
+@service.route('/PositionList', methods=['GET'])
+def showPositionList():
+    return trade.calcCurrentPosition()
+
+@service.route('/TradeList', methods=['GET'])
+def showTradeList():
+    return trade.showTradeList()
 
 def scheduleDailyData():
     _thread.start_new_thread(getPEData.getPEData,(constant.get_last_weekday(),))
@@ -80,13 +80,9 @@ def get_host_ip():
     return ip
 
 if __name__=='__main__':
-    #scheduleDailyData()
     scheduler = BackgroundScheduler()
     scheduler.add_job(scheduleDailyData, 'cron', hour=17, minute=30)
     scheduler.start()
 
     app.register_blueprint(service)
-    app.run(host='localhost', port=8089, debug=True)
-    
-    #getPEData.drewPEDateLines()
-    #stock_strategy.MAAvgSystem()
+    app.run(host=get_host_ip(), port=8089, debug=True)
