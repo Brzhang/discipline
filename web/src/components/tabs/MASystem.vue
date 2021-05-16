@@ -72,7 +72,7 @@ export default {
       for (let index = 0; index < this.list.length; index++) {
         if (this.list[index].code === code) {
           this.kDialogVisible = true
-          this.$refs.KChartDailog.showChart(this.list[index].code + ' - ' + this.list[index].name, this.list[index].values)
+          this.$refs.KChartDailog.showChart(this.list[index].code + ' - ' + this.list[index].name, this.list[index].values, 'MA')
           return
         }
       }

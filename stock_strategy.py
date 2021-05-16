@@ -53,93 +53,25 @@ def MASystem():
         ma60 = data.at[lastIndex,'MA60']
         ma120 = data.at[lastIndex,'MA120']
         deltaMA60 = ma60 - data.at[lastIndex-1, 'MA60']
-        if stock in positionList:
-            if ma5 - data.at[lastIndex-1, 'MA5'] < 0:
-                stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
-
-                lineNames = ['price', 'MA5', 'MA10', 'MA20', 'MA60', 'MA120']
-                Ys = [data['close'][120:].tolist(), data['MA5'][120:].tolist(), data['MA10'][120:].tolist(), data['MA20'][120:].tolist(), data['MA60'][120:].tolist(), data['MA120'][120:].tolist()]
-                colors = ['purple','red','blue','green','yellow','black']
-
-                while(len(PEdata.calcedIndustryPE['data']) < 1):
-                    time.sleep(1)
-                industryPE = DataFrame(PEdata.calcedIndustryPE['data'])
-
-                HYInfo = industryPE.loc[industryPE['industry_name']==stockInfo[4]].to_dict('records')[0]
-                date_to_string(data, 'date')
-                infoDic = {'opt':'sell0', 'vol':'0.3', 'code':stockInfo[1], 'name':stockInfo[2], 'price':price,
-                        'HY': stockInfo[4], 'HYPE':HYInfo['pe'], 'HYPETemperature':HYInfo['pe_temperature'],
-                        'dynamicPE':stockInfo[6], 'PE':stockInfo[5],'PB':stockInfo[7], '5Cost':data.at[lastIndex-5,'close'], '10Cost':data.at[lastIndex-10,'close'], 
-                        '20Cost':data.at[lastIndex-20,'close'],'60Cost':data.at[lastIndex-60,'close'], '120Cost':data.at[lastIndex-120,'close'],
-                        'values':{'lineNames':lineNames, 'x':data['date'][120:].tolist(),'Ys':Ys, 'colors': colors}}
-                result.append(infoDic)
-                trade.recordTrade(stockInfo[1], stockInfo[2], price, -0.3, data.at[lastIndex, 'date'])
-            elif ma10 > ma20:
-                stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
-
-                lineNames = ['price', 'MA5', 'MA10', 'MA20', 'MA60', 'MA120']
-                Ys = [data['close'][120:].tolist(), data['MA5'][120:].tolist(), data['MA10'][120:].tolist(), data['MA20'][120:].tolist(), data['MA60'][120:].tolist(), data['MA120'][120:].tolist()]
-                colors = ['purple','red','blue','green','yellow','black']
-
-                while(len(PEdata.calcedIndustryPE['data']) < 1):
-                    time.sleep(1)
-                industryPE = DataFrame(PEdata.calcedIndustryPE['data'])
-
-                HYInfo = industryPE.loc[industryPE['industry_name']==stockInfo[4]].to_dict('records')[0]
-                date_to_string(data, 'date')
-                infoDic = {'opt':'buy2', 'vol':'0.7', 'code':stockInfo[1], 'name':stockInfo[2], 'price':price,
-                        'HY': stockInfo[4], 'HYPE':HYInfo['pe'], 'HYPETemperature':HYInfo['pe_temperature'],
-                        'dynamicPE':stockInfo[6], 'PE':stockInfo[5],'PB':stockInfo[7], '5Cost':data.at[lastIndex-5,'close'], '10Cost':data.at[lastIndex-10,'close'], 
-                        '20Cost':data.at[lastIndex-20,'close'],'60Cost':data.at[lastIndex-60,'close'], '120Cost':data.at[lastIndex-120,'close'],
-                        'values':{'lineNames':lineNames, 'x':data['date'][120:].tolist(),'Ys':Ys, 'colors': colors}}
-                result.append(infoDic)
-                trade.recordTrade(stockInfo[1], stockInfo[2], price, 0.7, data.at[lastIndex, 'date'])
-            elif price < ma20:
-                stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
-
-                lineNames = ['price', 'MA5', 'MA10', 'MA20', 'MA60', 'MA120']
-                Ys = [data['close'][120:].tolist(), data['MA5'][120:].tolist(), data['MA10'][120:].tolist(), data['MA20'][120:].tolist(), data['MA60'][120:].tolist(), data['MA120'][120:].tolist()]
-                colors = ['purple','red','blue','green','yellow','black']
-
-                while(len(PEdata.calcedIndustryPE['data']) < 1):
-                    time.sleep(1)
-                industryPE = DataFrame(PEdata.calcedIndustryPE['data'])
-
-                HYInfo = industryPE.loc[industryPE['industry_name']==stockInfo[4]].to_dict('records')[0]
-                date_to_string(data, 'date')
-                infoDic = {'opt':'sell1', 'vol':'0.5', 'code':stockInfo[1], 'name':stockInfo[2], 'price':price,
-                        'HY': stockInfo[4], 'HYPE':HYInfo['pe'], 'HYPETemperature':HYInfo['pe_temperature'],
-                        'dynamicPE':stockInfo[6], 'PE':stockInfo[5],'PB':stockInfo[7], '5Cost':data.at[lastIndex-5,'close'], '10Cost':data.at[lastIndex-10,'close'], 
-                        '20Cost':data.at[lastIndex-20,'close'],'60Cost':data.at[lastIndex-60,'close'], '120Cost':data.at[lastIndex-120,'close'],
-                        'values':{'lineNames':lineNames, 'x':data['date'][120:].tolist(),'Ys':Ys, 'colors': colors}}
-                result.append(infoDic)
-                trade.recordTrade(stockInfo[1], stockInfo[2], price, -0.5, data.at[lastIndex, 'date'])
-            elif ma5 < ma10:
-                stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
-
-                lineNames = ['price', 'MA5', 'MA10', 'MA20', 'MA60', 'MA120']
-                Ys = [data['close'][120:].tolist(), data['MA5'][120:].tolist(), data['MA10'][120:].tolist(), data['MA20'][120:].tolist(), data['MA60'][120:].tolist(), data['MA120'][120:].tolist()]
-                colors = ['purple','red','blue','green','yellow','black']
-
-                while(len(PEdata.calcedIndustryPE['data']) < 1):
-                    time.sleep(1)
-                industryPE = DataFrame(PEdata.calcedIndustryPE['data'])
-
-                HYInfo = industryPE.loc[industryPE['industry_name']==stockInfo[4]].to_dict('records')[0]
-                date_to_string(data, 'date')
-                infoDic = {'opt':'sell2', 'vol':'0.5', 'code':stockInfo[1], 'name':stockInfo[2], 'price':price,
-                        'HY': stockInfo[4], 'HYPE':HYInfo['pe'], 'HYPETemperature':HYInfo['pe_temperature'],
-                        'dynamicPE':stockInfo[6], 'PE':stockInfo[5],'PB':stockInfo[7], '5Cost':data.at[lastIndex-5,'close'], '10Cost':data.at[lastIndex-10,'close'], 
-                        '20Cost':data.at[lastIndex-20,'close'],'60Cost':data.at[lastIndex-60,'close'], '120Cost':data.at[lastIndex-120,'close'],
-                        'values':{'lineNames':lineNames, 'x':data['date'][120:].tolist(),'Ys':Ys, 'colors': colors}}
-                result.append(infoDic)
-                trade.recordTrade(stockInfo[1], stockInfo[2], price, -0.5, data.at[lastIndex, 'date'])
-        elif price > ma20 and ma20 > ma5 and ma5 > ma10 and ma20 > ma60 and deltaMA60 > 0:
+        inPosition = False
+        for position in positionList:
+            if(stock[0] == position[0]):
+                inPosition = True
+                if ma5 - data.at[lastIndex-1, 'MA5'] < 0:
+                    result.append(makeTradeData(stock, data, 'sell0', 0.3, price, lastIndex))
+                    trade.recordTrade(stockInfo[1], stockInfo[2], price, -0.3, data.at[lastIndex, 'date'])
+                elif ma10 > ma20:
+                    result.append(makeTradeData(stock, data, 'buy2', 0.7, price, lastIndex))
+                    trade.recordTrade(stockInfo[1], stockInfo[2], price, 0.7, data.at[lastIndex, 'date'])
+                elif price < ma20:
+                    result.append(makeTradeData(stock, data, 'sell1', 0.5, price, lastIndex))
+                    trade.recordTrade(stockInfo[1], stockInfo[2], price, -0.5, data.at[lastIndex, 'date'])
+                elif ma5 < ma10:
+                    result.append(makeTradeData(stock, data, 'sell2', 0.5, price, lastIndex))
+                    trade.recordTrade(stockInfo[1], stockInfo[2], price, -0.5, data.at[lastIndex, 'date'])
+                break
+        if inPosition == False and price > ma20 and ma20 > ma5 and ma5 > ma10 and ma20 > ma60 and deltaMA60 > 0:
             stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
-
-            lineNames = ['price', 'MA5', 'MA10', 'MA20', 'MA60', 'MA120']
-            Ys = [data['close'][120:].tolist(), data['MA5'][120:].tolist(), data['MA10'][120:].tolist(), data['MA20'][120:].tolist(), data['MA60'][120:].tolist(), data['MA120'][120:].tolist()]
-            colors = ['purple','red','blue','green','yellow','black']
 
             while(len(PEdata.calcedIndustryPE['data']) < 1):
                 time.sleep(1)
@@ -152,10 +84,32 @@ def MASystem():
                         'HY': stockInfo[4], 'HYPE':HYInfo['pe'], 'HYPETemperature':HYInfo['pe_temperature'],
                         'dynamicPE':stockInfo[6], 'PE':stockInfo[5],'PB':stockInfo[7], '5Cost':data.at[lastIndex-5,'close'], '10Cost':data.at[lastIndex-10,'close'], 
                         '20Cost':data.at[lastIndex-20,'close'],'60Cost':data.at[lastIndex-60,'close'], '120Cost':data.at[lastIndex-120,'close'],
-                        'values':{'lineNames':lineNames, 'x':data['date'][120:].tolist(),'Ys':Ys, 'colors': colors}}
+                        'values':makeChartData(data)}
                 result.append(infoDic)
                 trade.recordTrade(stockInfo[1], stockInfo[2], price, 0.3, data.at[lastIndex, 'date'])
-            #drawLine.drawLines(data['date'][120:], Ys, lineNames, colors ,'MA-' + stockInfo[0], './Data/Pics/'+stockInfo[0]+'_'+stockInfo[1]).close()
+                #drawLine.drawLines(data['date'][120:], Ys, lineNames, colors ,'MA-' + stockInfo[0], './Data/Pics/'+stockInfo[0]+'_'+stockInfo[1]).close()
     dictResult['time'] = datetime.datetime.now()
     dictResult['data'] = result
     return result
+
+def makeChartData(data):
+    lineNames = ['price', 'MA5', 'MA10', 'MA20', 'MA60', 'MA120']
+    Ys = [data[['open','close','high','low']][120:].values.tolist(), data['MA5'][120:].tolist(), data['MA10'][120:].tolist(), data['MA20'][120:].tolist(), data['MA60'][120:].tolist(), data['MA120'][120:].tolist()]
+    colors = ['#5470c6','#91cc75','#fac858','#ee6666','#73c0de','#3ba272']
+    return {'lineNames':lineNames, 'x':data['date'][120:].tolist(),'Ys':Ys, 'colors': colors}
+
+def makeTradeData(stock, data, opt, vol, price, lastIndex):
+    stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
+
+    while(len(PEdata.calcedIndustryPE['data']) < 1):
+        time.sleep(1)
+    industryPE = DataFrame(PEdata.calcedIndustryPE['data'])
+
+    HYInfo = industryPE.loc[industryPE['industry_name']==stockInfo[4]].to_dict('records')[0]
+    date_to_string(data, 'date')
+    infoDic = {'opt':opt, 'vol':str(vol), 'code':stockInfo[1], 'name':stockInfo[2], 'price':price,
+            'HY': stockInfo[4], 'HYPE':HYInfo['pe'], 'HYPETemperature':HYInfo['pe_temperature'],
+            'dynamicPE':stockInfo[6], 'PE':stockInfo[5],'PB':stockInfo[7], '5Cost':data.at[lastIndex-5,'close'], '10Cost':data.at[lastIndex-10,'close'], 
+            '20Cost':data.at[lastIndex-20,'close'],'60Cost':data.at[lastIndex-60,'close'], '120Cost':data.at[lastIndex-120,'close'],
+            'values':makeChartData(data)}
+    return infoDic

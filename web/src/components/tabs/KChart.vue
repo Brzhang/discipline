@@ -21,14 +21,20 @@ export default {
     }
   },
   methods: {
-    makeSeries () {
+    makeSeries (chartType) {
       let series = []
       for (let i = 0; i < this.data.lineNames.length; i++) {
-        if (i === 0) {
+        if (i === 0 && chartType === 'MA') {
           series.push({
-            type: 'line',
+            type: 'candlestick',
             name: this.data.lineNames[0],
             data: this.data.Ys[0],
+            itemStyle: {
+              color: '#FD1050',
+              color0: '#0CF49B',
+              borderColor: '#FD1050',
+              borderColor0: '#0CF49B'
+            },
             markLine: {
               symbol: 'none',
               label: {
@@ -57,7 +63,7 @@ export default {
       }
       return series
     },
-    showChart (name, data) {
+    showChart (name, data, chartType) {
       this.kChartDivVisble = true
       this.stockName = name
       this.data = data
@@ -85,8 +91,10 @@ export default {
         },
         legend: {
           right: '30',
+          inactiveColor: '#777',
           data: this.data.lineNames
         },
+        color: this.data.colors,
         dataZoom: [{
           startValue: this.data.x[0]
         }, {
@@ -99,7 +107,7 @@ export default {
           data: this.data.x
         },
         yAxis: { name: '价格' },
-        series: this.makeSeries()
+        series: this.makeSeries(chartType)
       }
       this.kChart.setOption(option)
     }

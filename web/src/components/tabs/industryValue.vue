@@ -100,7 +100,7 @@ export default {
       })
         .then((res) => {
           this.loading = false
-          this.$refs.KChartDailog.showChart(hycode + ' - ' + name, res.data.values)
+          this.$refs.KChartDailog.showChart(hycode + ' - ' + name, res.data.values, 'PE')
         })
         .catch((error) => {
           // eslint-disable-next-line
