@@ -236,7 +236,8 @@ def getPEDataLinesData(hycode):
     df.columns = data[0].keys()
     df['date'] = df.apply(lambda x: x['date'].strftime('%Y%m%d'), axis=1)
     Ys = [df['dynamic_pe'].tolist(), df['pe_avg_month'].tolist(), df['pe_avg_3month'].tolist(), df['pe_avg_6month'].tolist(), df['pe_avg_year'].tolist()]
-    colors = ['red','blue','green','yellow','black']
+    #colors = ['red','blue','green','yellow','black']
+    colors = ['#5470c6','#91cc75','#fac858','#ee6666','#73c0de']
     value = {'industry_id':hycode, 'values':{'lineNames':lineNames, 'x':df['date'].tolist(),'Ys':Ys, 'colors': colors}}
     return value
     
