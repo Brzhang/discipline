@@ -4,7 +4,7 @@
       <KChart ref="KChartDailog" style="height:900px; width:1600px" />
     </el-dialog>
     <el-row>
-      <div style="font-size:11px">策略：收盘价高于20日均线，20、60多头排列，5、10多头排列预上穿20日均线。行业估值低于25历史百分位</div>
+      <div style="font-size:11px">策略：近60日收盘价窄幅震荡(15%)，10、20、60均线缠绕(5%),均线均价>60日线，120日线向上，收盘价在均线均价向上4%~10%之间，且高于昨收，成交量大于120天均量</div>
     </el-row>
     <el-row>
       <el-table height="920px" v-loading="loading" element-loading-text="别着急，重要的数据可以多等等" :data="list" stripe border fit highlight-current-row style="width: 100%; font-size:12px;">
