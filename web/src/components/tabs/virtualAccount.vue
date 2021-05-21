@@ -7,8 +7,8 @@
         <el-table-column width="100px" align="center" label="名称" header-align="center" prop="name" />
         <el-table-column width="150px" align="center" label="数量" header-align="center" prop="vol" />
         <el-table-column width="100px" align="center" label="买入价" header-align="center" prop="buyprice" />
-        <!-- <el-table-column width="100px" align="center" label="现价" sortable header-align="center" prop="price" />
-        <el-table-column width="100px" align="center" label="利润" sortable header-align="center" prop="profit" /> -->
+        <el-table-column width="100px" align="center" label="现价" sortable header-align="center" prop="price" />
+        <el-table-column width="100px" align="center" label="利润" sortable header-align="center" prop="profit" />
       </el-table>
     </el-col>
     <el-col :span="12" style="font-size:12px; width:50%" > 交易记录
@@ -18,10 +18,10 @@
         <el-table-column width="100px" align="center" label="名称" header-align="center" prop="name" />
         <el-table-column width="150px" align="center" label="数量" header-align="center" prop="vol" />
         <el-table-column width="100px" align="center" label="买入价" header-align="center" prop="buyprice" />
-        <!-- <el-table-column width="100px" align="center" label="现价" sortable header-align="center" prop="price" /> -->
+        <el-table-column width="100px" align="center" label="现价" sortable header-align="center" prop="price" />
         <el-table-column width="150px" align="center" label="交易时间" sortable header-align="center" prop="date" />
         <el-table-column width="100px" align="center" label="操作" header-align="center" prop="opt" />
-        <!-- <el-table-column width="100px" align="center" label="单次利润" sortable header-align="center" prop="profit" /> -->
+        <el-table-column width="100px" align="center" label="单次利润" sortable header-align="center" prop="profit" />
       </el-table>
     </el-col>
   </el-row>

@@ -53,6 +53,13 @@ def createZZ800Table():
     mysqlOp.createTable(conn, tbInfo)
     conn.close()
 
+def creatLastStockPriceTable():
+    conn = mysqlOp.connectMySQL()
+    tbInfo = 'last_stock_price (data_id INT(11) AUTO_INCREMENT, code VARCHAR(45) DEFAULT NULL,\
+        close FLOAT DEFAULT 0.0, date DATE, PRIMARY KEY (data_id))ENGINE=InnoDB DEFAULT CHARSET=utf8'
+    mysqlOp.createTable(conn, tbInfo)
+    conn.close()
+
 def creatStockTable(stockCode):
     conn = mysqlOp.connectMySQL()
     tbInfo = stockCode + ' (data_id INT AUTO_INCREMENT, code VARCHAR(45) DEFAULT NULL,\
@@ -99,6 +106,7 @@ def getStockData(api, stock):
         data = api.get_k_data(stock, startDate, datetime.date.today().strftime('%Y-%m-%d'))
         if len(data) > 0:
             saveStockData('c'+ stock, data)
+            updateStockPrice(stock, data['close'][-1], data['date'][-1])
 
 def getStocksdata(stockCodelist):
     api = TdxHq_API()
@@ -130,9 +138,21 @@ def getStockKData(stockCode):
 
 def getZZ800List():
     createZZ800Table()
+    creatLastStockPriceTable()
     if not os.path.exists('./Data'):
         os.mkdir('./Data')
     if downloadZZ800():
         data = readZZ800Data(constant.ZZ800fileName)
         saveData(data, 'zz800list')
         getStocksdata(data['code'])
+
+def updateStockPrice(code, price, date):
+    sql = 'select * from last_stock_price where code = "' + code + '"'
+    conn = mysqlOp.connectMySQL()
+    ret = mysqlOp.fetchALL(conn, sql)
+    if len(ret) > 0 :
+        sql = 'update last_stock_price set close = ' + str(price) + ', date = "' + date+ '" where code = "' + code + '"'
+    else:
+        sql = 'insert into last_stock_price(code,close,date) values("' + code + '",' + str(price) + ',"' + date + '")'
+    mysqlOp.executeSQL(conn, sql)
+    conn.close()
