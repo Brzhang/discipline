@@ -12,7 +12,7 @@ import constant
 
 def isDataExist(dateName, table):
     conn = mysqlOp.connectMySQL()
-    sql = 'select count(*) count from ' + table + ' where date=' + dateName
+    sql = 'select count(*) count from ' + table + ' where date="' + dateName + '"'
     ret = mysqlOp.fetchALL(conn, sql)
     conn.close()
     if ret[0]['count'] > 0:
@@ -103,7 +103,27 @@ def get_jsl_dividend_rate():
     """
     create_dividend_rate_table()
     jsl_dividend_rate_url = 'https://www.jisilu.cn/data/stock/dividend_rate_list/'
-    dividend_rate_text = urllib.request.urlopen(jsl_dividend_rate_url).read()
+    request_header = {'Content-Type': 'application/x-www-form-urlencoded; charset:UTF-8'}
+    request_param = {'market[]': 'sh',
+                    'market[]': 'sz',
+                    'industry': '',
+                    'pe': '',
+                    'pb': '',
+                    'dividend_rate': '',
+                    'roe': '',
+                    'pe_temperature': '25',
+                    'pb_temperature': '25',
+                    'aft_dividend': '',
+                    'roe_average': '15',
+                    'revenue_average': '',
+                    'profit_average': '',
+                    'eps_growth_ttm': '',
+                    'cashflow_average': '',
+                    'int_debt_rate': '',
+                    'rp': '500'}
+    request_param = bytes(urllib.parse.urlencode(request_param),encoding='utf-8')
+    request = urllib.request.Request(url=jsl_dividend_rate_url, data=request_param, headers=request_header, method='POST')
+    dividend_rate_text = urllib.request.urlopen(request).read()
 
     dividend_rate_json = json.loads(dividend_rate_text)
     dividend_rate_list: List[Any] = []
@@ -124,6 +144,7 @@ def get_jsl_dividend_rate():
                                        'roe', 'roe_average', 'revenue_average', 'profit_average',
                                        'cashflow_average', 'dividend_rate_average', 'eps_growth_ttm', 'int_debt_rate',
                                        'industry_nm']]
+    dividend_rate_df['aft_dividend'] = dividend_rate_df.apply(lambda x: float(x['aft_dividend']) if x['aft_dividend'] != '-' else 0.0, axis=1)
     dividend_rate_df['date'] = datetime.date.today()
     saveData(dividend_rate_df, 'dividend_rate', 'replace')
 

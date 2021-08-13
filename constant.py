@@ -10,6 +10,16 @@ HQServerPort=7709
 EXHQServerIP='112.74.214.43'
 EXHQServerPort=7727
 PEDataUrl='http://47.97.204.47/syl/'
+ZZ800fileUrl='http://www.csindex.com.cn/uploads/file/autofile/cons/000906cons.xls'
+ZZ800fileDownloadHeaders={
+    'Host': 'www.csindex.com.cn',
+    'Pragma': 'no-cache',
+    'Cache-Control': 'no-cache',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36 Edg/91.0.864.71',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7'}
 ZZ800fileName = '000906cons.xls'
 
 def get_last_weekday(day=datetime.date.today()):

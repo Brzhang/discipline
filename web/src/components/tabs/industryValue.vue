@@ -148,7 +148,7 @@ export default {
       return ''
     },
     cellStyleBG ({row, column, rowIndex, columnIndex}) {
-      if (columnIndex === 4 && this.sortedIndustryValue[rowIndex].pe !== 0) {
+      if (columnIndex === 4 && (this.sortedIndustryValue[rowIndex].pe !== 0 || this.sortedIndustryValue[rowIndex].pe_temperature !== 100)) {
         return this.setTemperatureGBColor(this.sortedIndustryValue[rowIndex].pe_temperature)
       }
     },

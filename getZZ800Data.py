@@ -19,8 +19,7 @@ def isDataExist(dateName, table):
 
 def downloadZZ800():
     print('will download zz800')
-    url='http://www.csindex.com.cn/uploads/file/autofile/cons/' + constant.ZZ800fileName
-    zz800file = requests.get(url)
+    zz800file = requests.get(constant.ZZ800fileUrl, headers = constant.ZZ800fileDownloadHeaders)
     open('./Data/' + constant.ZZ800fileName, 'wb').write(zz800file.content)
     return True
 
@@ -121,16 +120,17 @@ def getLastDate():
     conn.close()
     return ret
 
-def getZZ800CodeList():
-    date = getLastDate()
-    sql = 'select tb.code, tb.Name from zz800list tb where tb.date = ' + date[0].strftime('%Y%m%d')
+def getZZ800CodeList(date):
+    #if date == datetime.date.today().strftime('%Y-%m-%d'):
+    date = getLastDate()[0].strftime('%Y%m%d')
+    sql = 'select tb.code, tb.Name from zz800list tb where tb.date = "' + date + '"'
     conn = mysqlOp.connectMySQL()
     codes = mysqlOp.fetchALL(conn, sql)
     conn.close()
     return codes
 
-def getStockKData(stockCode):
-    sql = 'select * from ' + stockCode
+def getStockKData(stockCode, start, end):
+    sql = 'select * from ' + stockCode + ' where date <= "' + end + '" and date >= "' + start + '"'
     conn = mysqlOp.connectMySQL()
     KData = mysqlOp.fetchALL(conn, sql)
     conn.close()
@@ -145,6 +145,7 @@ def getZZ800List():
         data = readZZ800Data(constant.ZZ800fileName)
         saveData(data, 'zz800list')
         getStocksdata(data['code'])
+    print('get ZZ800 data completed. ' , datetime.datetime.now())
 
 def updateStockPrice(code, price, date):
     sql = 'select * from last_stock_price where code = "' + code + '"'

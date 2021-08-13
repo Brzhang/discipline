@@ -48,7 +48,7 @@ def calcCurrentPosition():
     conn = mysqlOp.connectMySQL()
     sql = "set sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';"
     mysqlOp.executeSQL(conn, sql)
-    sql = 'select tl.code,tl.name,tl.vol,tl.price,tl.date,tl.opt,lsp.close from trade_list tl, last_stock_price lsp where tl.code = lsp.code group by tl.code HAVING sum(tl.vol) > 0'
+    sql = 'select tl.code,tl.name,sum(tl.vol),tl.price,tl.date,tl.opt,lsp.close from trade_list tl, last_stock_price lsp where tl.code = lsp.code group by tl.code HAVING sum(tl.vol) > 0'
     ret = mysqlOp.fetchALL(conn, sql)
     conn.close()
     return convertTradeDataJson(ret)
@@ -56,5 +56,6 @@ def calcCurrentPosition():
 def convertTradeDataJson(data):
     columns = ['code', 'name', 'vol', 'buyprice', 'date', 'opt', 'price']
     data = constant.convertDBToDF(data, columns)
+    data['vol'] =  data.apply(lambda x: int(x['vol']), axis=1)
     data['profit'] = (data['price']-data['buyprice'])*data['vol']
     return data.to_json(orient="records", force_ascii = False)

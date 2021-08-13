@@ -182,7 +182,7 @@ def createStockInfo():
 
 def isDataExist(dateName, table):
     conn = mysqlOp.connectMySQL()
-    sql = 'select count(*) count from ' + table + ' where date=' + dateName
+    sql = 'select count(*) count from ' + table + ' where date="' + dateName + '"'
     ret = mysqlOp.fetchALL(conn, sql)
     conn.close()
     if ret[0]['count'] > 0:
@@ -325,3 +325,4 @@ def getPEData(endDate):
     if len(dateNameList) > 0:
         dateName = dateNameList.pop()
         getStockInfo(dateName)
+    print('get PE data completed. ', datetime.datetime.now())

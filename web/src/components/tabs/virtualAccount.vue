@@ -21,7 +21,7 @@
         <el-table-column width="100px" align="center" label="现价" sortable header-align="center" prop="price" />
         <el-table-column width="150px" align="center" label="交易时间" sortable header-align="center" prop="date" />
         <el-table-column width="100px" align="center" label="操作" header-align="center" prop="opt" />
-        <el-table-column width="100px" align="center" label="单次利润" sortable header-align="center" prop="profit" />
+        <!-- <el-table-column width="100px" align="center" label="单次利润" sortable header-align="center" prop="profit" /> -->
       </el-table>
     </el-col>
   </el-row>

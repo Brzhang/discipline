@@ -3,6 +3,9 @@ import getZZ800Data
 import stock_strategy
 import jisilu_data
 import trade
+import tradeTrace
+import fcntl
+import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 import datetime
 import time
@@ -10,15 +13,17 @@ from flask import Flask, Blueprint, render_template, jsonify, request
 import constant
 import flask_cors
 import socket
-import _thread
+#import _thread
 
 app = Flask(__name__)
 flask_cors.CORS(app, supports_credentials=True)
 service = Blueprint('discipline', __name__, static_folder='./web', template_folder='./web')
+updating = False
 
 @service.route('/update', methods=['GET'])
 def updateDB():
-    scheduleDailyData()
+    if not updating :
+        scheduleDailyData()
     return ''
 
 @service.route('/IndustryPE', methods=['GET'])
@@ -61,13 +66,26 @@ def showPositionList():
 def showTradeList():
     return trade.showTradeList()
 
+@service.route('/TradeTrace' , methods=['GET'])
+def showTrace():
+    #tradeTrace.beginTrace('2017-01-01', datetime.date.today().strftime('%Y-%m-%d'))
+    tradeTrace.recordTrade('000001', 'name', 12.0, 0.3, '2021-02-01', 'buy1')
+    tradeTrace.recordTrade('000001', 'name', 11.8, -2500, '2021-03-01', 'sell0')
+    tradeTrace.recordTrade('000002', 'name1', 8.0, 0.3, '2021-03-01', 'buy1')
+    return tradeTrace.getPositionDF().to_json(orient="records", force_ascii = False) 
+    #return tradeTrace.showTradeList()
+
 def scheduleDailyData():
-    _thread.start_new_thread(getPEData.getPEData,(constant.get_last_weekday(),))
-    _thread.start_new_thread(getZZ800Data.getZZ800List,())
+    updating = True
+    #_thread.start_new_thread(getPEData.getPEData,(constant.get_last_weekday(),))
+    getPEData.getPEData(constant.get_last_weekday(datetime.date.today()))
+    #_thread.start_new_thread(getZZ800Data.getZZ800List,())
+    getZZ800Data.getZZ800List()
     jisilu_data.get_jsl_dividend_rate()
     jisilu_data.get_jsl_convert_bond_data()
     jisilu_data.get_jsl_temperature()
-    print(datetime.datetime.now())
+    print('get jisilu data completed. ' , datetime.datetime.now())
+    updating = False
 
 def get_host_ip():
     try:
@@ -80,9 +98,21 @@ def get_host_ip():
     return ip
 
 if __name__=='__main__':
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduleDailyData, 'cron', hour=17, minute=30)
-    scheduler.start()
+    #scheduler = BackgroundScheduler()
+    #scheduler.add_job(scheduleDailyData, 'cron', hour=17, minute=00)
+    #scheduler.start()
+    f = open("scheduler.lock", "wb")
+    try:
+        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(scheduleDailyData, 'cron', hour=17, minute=00)
+        scheduler.start()
+    except:
+        pass
+    def unlock():
+        fcntl.flock(f, fcntl.LOCK_UN)
+        f.close()
+    atexit.register(unlock)
 
     app.register_blueprint(service)
     app.run(host=get_host_ip(), port=8089, debug=True)

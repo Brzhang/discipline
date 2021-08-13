@@ -8,6 +8,7 @@ import getPEData as PEdata
 import drawLine
 import constant
 import trade
+import tradeTrace
 
 dictResult = {'time': datetime.datetime.now(), 'data': []}
 
@@ -26,13 +27,21 @@ def MASystem():
     if len(dictResult['data']) > 0 and (datetime.datetime.now() < signTime or dictResult['time'] > signTime):
         return dictResult['data']
     dictResult['data'].clear()
+    return calcMASystem(constant.DataStartDate, datetime.date.today().strftime('%Y-%m-%d'), False)
+
+def calcMASystem(start, end, trace):
     # get zz800 list
-    stockList = zz800.getZZ800CodeList()
+    stockList = zz800.getZZ800CodeList(end)
     result: List[Any] = []
-    positionList = trade.getPositionList()
+    if trace:
+        positionList = tradeTrace.getPositionList()
+    else:
+        positionList = trade.getPositionList()
     for stock in stockList:
-        print('will calc MASystem: ', stock[0])
-        data = DataFrame(zz800.getStockKData('c' + stock[0]))
+        print('will calc MASystem: ', stock[0] , ' start date: ', start, ' end date: ', end)
+        data = DataFrame(zz800.getStockKData('c' + stock[0], start, end))
+        if len(data) < 120:
+            continue
         data.columns = ['data_id', 'code', 'open', 'close', 'high', 'low', 'vol', 'amount', 'date']
         calcMA(data, 5)
         calcMA(data, 10)
@@ -58,20 +67,32 @@ def MASystem():
                 inPosition = True
                 if ma5 - data.at[lastIndex-1, 'MA5'] < 0:
                     stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
-                    result.append(makeTradeData(stockInfo, data, 'sell0', 0.3, price, lastIndex))
-                    trade.recordTrade(stockInfo[1], stockInfo[2], price, -1*position[1], data.at[lastIndex, 'date'], 'sell0')
+                    if trace:
+                        tradeTrace.recordTrade(stockInfo[1], stockInfo[2], price, -1*position[1], data.at[lastIndex, 'date'], 'sell0')
+                    else:
+                        result.append(makeTradeData(stockInfo, data, 'sell0', 0.3, price, lastIndex))
+                        trade.recordTrade(stockInfo[1], stockInfo[2], price, -1*position[1], data.at[lastIndex, 'date'], 'sell0')
                 elif ma10 > ma20:
                     stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
-                    result.append(makeTradeData(stockInfo, data, 'buy2', 0.7, price, lastIndex))
-                    trade.recordTrade(stockInfo[1], stockInfo[2], price, 0.7, data.at[lastIndex, 'date'], 'buy2')
+                    if trace:
+                        tradeTrace.recordTrade(stockInfo[1], stockInfo[2], price, 0.7, data.at[lastIndex, 'date'], 'buy2')
+                    else:
+                        result.append(makeTradeData(stockInfo, data, 'buy2', 0.7, price, lastIndex))
+                        trade.recordTrade(stockInfo[1], stockInfo[2], price, 0.7, data.at[lastIndex, 'date'], 'buy2')
                 elif price < ma20:
                     stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
-                    result.append(makeTradeData(stockInfo, data, 'sell1', 0.5, price, lastIndex))
-                    trade.recordTrade(stockInfo[1], stockInfo[2], price, -0.5*position[1], data.at[lastIndex, 'date'], 'sell1')
+                    if trace:
+                        tradeTrace.recordTrade(stockInfo[1], stockInfo[2], price, -0.5*position[1], data.at[lastIndex, 'date'], 'sell1')
+                    else:
+                        result.append(makeTradeData(stockInfo, data, 'sell1', 0.5, price, lastIndex))
+                        trade.recordTrade(stockInfo[1], stockInfo[2], price, -0.5*position[1], data.at[lastIndex, 'date'], 'sell1')
                 elif ma5 < ma10:
                     stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
-                    result.append(makeTradeData(stockInfo, data, 'sell2', 1, price, lastIndex))
-                    trade.recordTrade(stockInfo[1], stockInfo[2], price, -1*position[1], data.at[lastIndex, 'date'], 'sell2')
+                    if trace:
+                        tradeTrace.recordTrade(stockInfo[1], stockInfo[2], price, -1*position[1], data.at[lastIndex, 'date'], 'sell2')
+                    else:
+                        result.append(makeTradeData(stockInfo, data, 'sell2', 1, price, lastIndex))
+                        trade.recordTrade(stockInfo[1], stockInfo[2], price, -1*position[1], data.at[lastIndex, 'date'], 'sell2')
                 break
         if inPosition == False:
             ''' 1、多均线集结在一起，30日、60日、90日均线之间幅度不超过5%。
@@ -91,34 +112,39 @@ def MASystem():
             data['MAV120'] = talib.MA(numpy.array(data['amount']), timeperiod = 120)
             recent60Price = data['close'][3:-63].tolist()
             #if price > ma20 and ma20 > ma5 and ma5 > ma10 and ma20 > ma60 and \
-            if maxValue/minValue < 1.05 and price > avgValue*1.04 and price < avgValue*1.1 and avgValue > ma120 and price > data.at[lastIndex-1,'close'] and \
+            '''price > avgValue*1.04 and price < avgValue*1.1 and'''
+            if maxValue/minValue < 1.05 and avgValue > ma120 and price > data.at[lastIndex-1,'close'] and \
                 max(recent60Price) < min(recent60Price)*1.15 and deltaMA120 > 0 and data.at[lastIndex, 'amount'] > data.at[lastIndex,'MAV120']:
                 stockInfo = PEdata.getStockInfoWithCode(stock[0])[0]
 
-                while(len(PEdata.calcedIndustryPE['data']) < 1):
+                '''while(len(PEdata.calcedIndustryPE['data']) < 1):
                     time.sleep(1)
                 industryPE = DataFrame(PEdata.calcedIndustryPE['data'])
 
                 HYInfo = industryPE.loc[industryPE['industry_name']==stockInfo[4]].to_dict('records')[0]
-                if((HYInfo['pe'] == 0 and HYInfo['pe_temperature']==100) or HYInfo['pe_temperature']<25.0):
+                if((HYInfo['pe'] == 0 and HYInfo['pe_temperature']==100) or HYInfo['pe_temperature']<25.0):'''
+                if trace:
+                    tradeTrace.recordTrade(stockInfo[1], stockInfo[2], price, 0.3, data.at[lastIndex, 'date'], 'buy1')
+                else:
                     date_to_string(data, 'date')
                     infoDic = {'opt':'buy1', 'vol':'0.3', 'code':stockInfo[1], 'name':stockInfo[2], 'price':price,
-                            'HY': stockInfo[4], 'HYPE':HYInfo['pe'], 'HYPETemperature':HYInfo['pe_temperature'],
-                            'dynamicPE':stockInfo[6], 'PE':stockInfo[5],'PB':stockInfo[7], '5Cost':data.at[lastIndex-5,'close'], '10Cost':data.at[lastIndex-10,'close'], 
-                            '20Cost':data.at[lastIndex-20,'close'],'60Cost':data.at[lastIndex-60,'close'], '120Cost':data.at[lastIndex-120,'close'],
-                            'values':makeChartData(data)}
+                        'HY': stockInfo[4], 'HYPE':HYInfo['pe'], 'HYPETemperature':HYInfo['pe_temperature'],
+                        'dynamicPE':stockInfo[6], 'PE':stockInfo[5],'PB':stockInfo[7], '5Cost':data.at[lastIndex-5,'close'], '10Cost':data.at[lastIndex-10,'close'], 
+                        '20Cost':data.at[lastIndex-20,'close'],'60Cost':data.at[lastIndex-60,'close'], '120Cost':data.at[lastIndex-120,'close'],
+                        'values':makeChartData(data)}
                     result.append(infoDic)
                     trade.recordTrade(stockInfo[1], stockInfo[2], price, 0.3, data.at[lastIndex, 'date'], 'buy1')
                     #drawLine.drawLines(data['date'][120:], Ys, lineNames, colors ,'MA-' + stockInfo[0], './Data/Pics/'+stockInfo[0]+'_'+stockInfo[1]).close()
-    dictResult['time'] = datetime.datetime.now()
-    dictResult['data'] = result
+    if not trace:
+        dictResult['time'] = datetime.datetime.now()
+        dictResult['data'] = result
     return result
 
 def makeChartData(data):
     lineNames = ['price', 'MA5', 'MA10', 'MA20', 'MA60', 'MA120']
     Ys = [data[['open','close','high','low']][120:].values.tolist(), data['MA5'][120:].tolist(), data['MA10'][120:].tolist(), data['MA20'][120:].tolist(), data['MA60'][120:].tolist(), data['MA120'][120:].tolist()]
     colors = ['#5470c6','#91cc75','#fac858','#ee6666','#73c0de','#3ba272']
-    return {'lineNames':lineNames, 'x':data['date'][120:].tolist(),'Ys':Ys, 'colors': colors}
+    return {'lineNames':lineNames, 'x':data['date'][120:].tolist(),'Ys':Ys, 'colorskj': colors}
 
 def makeTradeData(stockInfo, data, opt, vol, price, lastIndex):
     while(len(PEdata.calcedIndustryPE['data']) < 1):

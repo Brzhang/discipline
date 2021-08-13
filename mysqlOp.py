@@ -1,8 +1,12 @@
 from sqlalchemy import create_engine
+from pymysql.converters import escape_string
+
+def escapeString(sql):
+    return escape_string(sql)
 
 #connect db
 def connectMySQL():
-    engine = create_engine('mysql+pymysql://root:root@127.0.0.1:3306/discipline?charset=utf8')
+    engine = create_engine('mysql+pymysql://root:zjt841110@127.0.0.1:3306/discipline?charset=utf8')
     return engine.connect()
 
 #execute SQL
