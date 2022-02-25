@@ -1,0 +1,11 @@
+pandas
+PyMySQL
+requests
+SQLAlchemy
+xlrd
+matplotlib
+pytdx
+talib
+apscheduler
+flask
+flask_cors

@@ -98,14 +98,11 @@ def get_host_ip():
     return ip
 
 if __name__=='__main__':
-    #scheduler = BackgroundScheduler()
-    #scheduler.add_job(scheduleDailyData, 'cron', hour=17, minute=00)
-    #scheduler.start()
     f = open("scheduler.lock", "wb")
     try:
         fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
         scheduler = BackgroundScheduler()
-        scheduler.add_job(scheduleDailyData, 'cron', hour=17, minute=00)
+        scheduler.add_job(scheduleDailyData, 'cron', day_of_week='mon-fri', hour=17, minute=00)
         scheduler.start()
     except:
         pass

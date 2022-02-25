@@ -10,9 +10,9 @@ HQServerPort=7709
 EXHQServerIP='112.74.214.43'
 EXHQServerPort=7727
 PEDataUrl='http://47.97.204.47/syl/'
-ZZ800fileUrl='http://www.csindex.com.cn/uploads/file/autofile/cons/000906cons.xls'
+ZZ800fileUrl='https://csi-web-dev.oss-cn-shanghai-finance-1-pub.aliyuncs.com/static/html/csindex/public/uploads/file/autofile/cons/000906cons.xls'
 ZZ800fileDownloadHeaders={
-    'Host': 'www.csindex.com.cn',
+    'Host': 'csi-web-dev.oss-cn-shanghai-finance-1-pub.aliyuncs.com',
     'Pragma': 'no-cache',
     'Cache-Control': 'no-cache',
     'Upgrade-Insecure-Requests': '1',

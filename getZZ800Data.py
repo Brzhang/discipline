@@ -37,8 +37,8 @@ def readZZ800Data(fileName):
         Data800 = pandas.read_excel(content, engine='xlrd', dtype=dtype, parse_dates=['日期Date'])
         if len(Data800) == 0:
             return None
-        Data800.columns = ['date', 'index_code', 'index_name', 'index_name_en', 'code', 'name', 'name_en', 'jsy']
-        Data800.drop(['index_code','index_name','index_name_en','name_en','jsy'],axis=1,inplace=True)
+        Data800.columns = ['date', 'index_code', 'index_name', 'index_name_en', 'code', 'name', 'name_en', 'jys', 'jys_en']
+        Data800.drop(['index_code','index_name','index_name_en','name_en','jys','jys_en'],axis=1,inplace=True)
         return Data800
     else:
         #os.remove('./Data/'+ fileName)
@@ -109,9 +109,10 @@ def getStockData(api, stock):
 
 def getStocksdata(stockCodelist):
     api = TdxHq_API()
-    with api.connect(constant.HQServerIP, constant.HQServerPort):
+    if api.connect(constant.HQServerIP, constant.HQServerPort):
         for stock in stockCodelist:
             getStockData(api, stock)
+        api.disconnect()
 
 def getLastDate():
     sql = 'select tb.date from zz800list tb order by tb.date DESC'
